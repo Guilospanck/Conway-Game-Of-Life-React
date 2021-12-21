@@ -33,6 +33,19 @@ export const useGameViewModel = (): IUseGameViewModel => {
   const onClickRandomBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
+    const matrixCopy = [...matrix];
+
+    for (let row = 0; row < matrixCopy.length; row++) {
+      const matrixCopyRow = matrixCopy[row];
+      for (let column = 0; column < matrixCopyRow.length; column++) {
+        const randomValue = Math.floor(Math.random() * 2);
+        matrixCopy[row][column] = randomValue;
+      }
+
+    }
+    
+    setMatrix(matrixCopy);
+
   };
 
   return {
