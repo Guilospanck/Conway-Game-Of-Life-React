@@ -1,5 +1,17 @@
 import React from "react";
 
+/** Views */
+import { GameView } from './views';
+
+/** ViewModels */
+import { useGameViewModel } from "./viewModels/gameViewModel";
+
+/** Components */
+
 export const Game = () => {
-  return <h1>Hello</h1>;
+  const viewModel = useGameViewModel();
+
+  return (
+    <GameView viewModel={viewModel} />
+  );
 };
