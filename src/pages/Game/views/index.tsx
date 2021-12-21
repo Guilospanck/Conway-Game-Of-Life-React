@@ -6,25 +6,37 @@ type Props = {
 };
 
 import {
-  Grid, Cell,
+  Grid, RowGrid, ColumnGrid, Cell, EnumerationCell,
   RandomInitializationBTN,
-  StartGameBTN, StopGameBTN,
+  StartGameBTN, StopGameBTN, ResetGameBTN
 } from './styles';
 
 export const GameView = ({ viewModel }: Props) => {
 
   const _generateGrids = () => {
     const cells = [];
-    
+    const rowsNumbers = [];
+
     viewModel.matrix.map((row, rowIdx) => {
-      if(row.length > 1) {
+      rowsNumbers.push(<EnumerationCell>{rowIdx}</EnumerationCell>);
+      if (row.length > 1) {
         row.map((column, columnIdx) => {
           cells.push(<Cell key={`${rowIdx}-${columnIdx}`} live={column} />);
         });
       }
     });
-    
-    return cells;
+
+    return (
+      <>
+        <RowGrid gridLength={viewModel.gridLength}>{rowsNumbers}</RowGrid>
+        <div style={{ display: 'flex' }}>
+          <ColumnGrid gridLength={viewModel.gridLength}>{rowsNumbers}</ColumnGrid>
+          <Grid gridLength={viewModel.gridLength}>
+            {cells}
+          </Grid>
+        </div>
+      </>
+    );
   };
 
   const GamesGrid = () => {
@@ -33,9 +45,8 @@ export const GameView = ({ viewModel }: Props) => {
         <RandomInitializationBTN onClick={viewModel.onClickRandomBtn}>Get Random</RandomInitializationBTN>
         <StartGameBTN onClick={viewModel.onClickStartGameBtn}>Start</StartGameBTN>
         <StopGameBTN onClick={viewModel.onClickStopGameBtn}>Stop</StopGameBTN>
-        <Grid gridLength={viewModel.gridLength}>
-          {_generateGrids()}
-        </Grid>
+        <ResetGameBTN onClick={viewModel.onClickResetGameBtn}>Reset</ResetGameBTN>
+        {_generateGrids()}
       </>
     );
   };

@@ -8,6 +8,7 @@ export interface IUseGameViewModel {
   setGridLength: (gridLength: number) => void,
   onClickStartGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickStopGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
+  onClickResetGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
 }
 
 export const useGameViewModel = (): IUseGameViewModel => {
@@ -62,6 +63,10 @@ export const useGameViewModel = (): IUseGameViewModel => {
     clearInterval(ticksInterval);
   };
 
+  const onClickResetGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    _generateMatrix();
+  };
+
   const _verifyPopulationAndUpdateIt = () => {
 
     const matrixCopy = [...matrix];
@@ -97,7 +102,8 @@ export const useGameViewModel = (): IUseGameViewModel => {
     gridLength,
     setGridLength,
     onClickStartGameBtn,
-    onClickStopGameBtn
+    onClickStopGameBtn,
+    onClickResetGameBtn
   }
 
 };
