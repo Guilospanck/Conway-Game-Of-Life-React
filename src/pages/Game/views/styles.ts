@@ -12,11 +12,19 @@ export const Grid = styled.div<IGrid>`
 `;
 
 interface ICell {
-  bgColor: string
+  live: number
 }
 
 export const Cell = styled.div<ICell>`
   width: 20px;
   height: 20px;
-  background-color: ${props => props.bgColor};
+  background-color: ${props => props.live === 1 ? 'red' : 'gray'};
+`;
+
+export const RandomInitializationBTN = styled.button`
+  outline: none;
+  background: none;
+  // border: none;
+  cursor: pointer;
+  border-radius: 5px;
 `;

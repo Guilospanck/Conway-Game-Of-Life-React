@@ -1,26 +1,39 @@
 import React from "react";
 import { IUseGameViewModel } from "../viewModels/gameViewModel";
 
-import { Grid, Cell } from './styles';
+type Props = {
+  viewModel: IUseGameViewModel
+};
 
-export const GameView = ({ viewModel: IUseGameViewModel }) => {
+import {
+  Grid, Cell,
+  RandomInitializationBTN
+} from './styles';
 
-  const _generateGrids = (GRID_LENGTH: number) => {
+export const GameView = ({ viewModel }: Props) => {
+
+  const _generateGrids = () => {
     const cells = [];
-    for (let index = 0; index < GRID_LENGTH * GRID_LENGTH; index++) {
-      cells.push(<Cell key={index} bgColor={'gray'} />);
-    }
-
+    
+    viewModel.matrix.map((row, rowIdx) => {
+      if(row.length > 1) {
+        row.map((column, columnIdx) => {
+          cells.push(<Cell key={`${rowIdx}-${columnIdx}`} live={column} />);
+        });
+      }
+    });
+    
     return cells;
   };
 
   const GamesGrid = () => {
-    const GRID_LENGTH = 50;
-
     return (
-      <Grid gridLength={GRID_LENGTH}>
-        {_generateGrids(GRID_LENGTH)}
-      </Grid>
+      <>
+        <RandomInitializationBTN onClick={viewModel.onClickRandomBtn}>Get Random</RandomInitializationBTN>
+        <Grid gridLength={viewModel.gridLength}>
+          {_generateGrids()}
+        </Grid>
+      </>
     );
   };
 
