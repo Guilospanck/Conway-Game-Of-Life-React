@@ -7,7 +7,8 @@ type Props = {
 
 import {
   Grid, Cell,
-  RandomInitializationBTN
+  RandomInitializationBTN,
+  StartGameBTN, StopGameBTN,
 } from './styles';
 
 export const GameView = ({ viewModel }: Props) => {
@@ -30,6 +31,8 @@ export const GameView = ({ viewModel }: Props) => {
     return (
       <>
         <RandomInitializationBTN onClick={viewModel.onClickRandomBtn}>Get Random</RandomInitializationBTN>
+        <StartGameBTN onClick={viewModel.onClickStartGameBtn}>Start</StartGameBTN>
+        <StopGameBTN onClick={viewModel.onClickStopGameBtn}>Stop</StopGameBTN>
         <Grid gridLength={viewModel.gridLength}>
           {_generateGrids()}
         </Grid>

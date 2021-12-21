@@ -5,13 +5,16 @@ export interface IUseGameViewModel {
   matrix: [][],
   setMatrix: (matrix: [][]) => void,
   gridLength: number,
-  setGridLength: (gridLength: number) => void
+  setGridLength: (gridLength: number) => void,
+  onClickStartGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
+  onClickStopGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
 }
 
 export const useGameViewModel = (): IUseGameViewModel => {
 
   const [matrix, setMatrix] = useState([]);
   const [gridLength, setGridLength] = useState(50);
+  const [ticksInterval, setTicksInterval] = useState(null);
 
   const _generateMatrix = () => {
     const matrixArray = [];
@@ -43,17 +46,58 @@ export const useGameViewModel = (): IUseGameViewModel => {
       }
 
     }
-    
+
     setMatrix(matrixCopy);
 
   };
+
+  const onClickStartGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (ticksInterval !== null) return;
+
+    const ticks = setInterval(() => _verifyPopulationAndUpdateIt(), 1 * 1000);
+    setTicksInterval(ticks);
+  };
+
+  const onClickStopGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    clearInterval(ticksInterval);
+  };
+
+  const _verifyPopulationAndUpdateIt = () => {
+
+    const matrixCopy = [...matrix];
+
+    matrixCopy.forEach((row, rowIndex) => {
+      row.forEach((cell, columnIndex) => {
+        if(cell === 1) _verifyLiveCell(rowIndex, columnIndex);
+        else _verifyDeadCell(rowIndex, columnIndex);
+      });
+    });
+  };
+
+  const _verifyLiveCell = (row, column) => {
+    /**
+     * Any live cell with 2 or 3 live neighbours Survives. If not, dies.
+     */
+
+    
+
+  };
+
+  const _verifyDeadCell = (row, column) => {
+    /**
+     * Any dead cell with 3 LIVE neighbours becomes a live cell. Otherwise, stays dead.
+     */
+  };
+
 
   return {
     onClickRandomBtn,
     matrix,
     setMatrix,
     gridLength,
-    setGridLength
+    setGridLength,
+    onClickStartGameBtn,
+    onClickStopGameBtn
   }
 
 };
