@@ -35,7 +35,7 @@ interface ICell {
 export const Cell = styled.div<ICell>`
   width: ${CELL_SIZE};
   height: ${CELL_SIZE};
-  background-color: ${props => props.live === 1 ? '#be8410' : '#b4b4b4'};
+  background-color: ${props => props.live === 1 ? '#1310be' : '#b4b4b4'};
 `;
 
 export const EnumerationCell = styled.div`

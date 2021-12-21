@@ -18,7 +18,7 @@ export const GameView = ({ viewModel }: Props) => {
     const rowsNumbers = [];
 
     viewModel.matrix.map((row, rowIdx) => {
-      rowsNumbers.push(<EnumerationCell>{rowIdx}</EnumerationCell>);
+      rowsNumbers.push(<EnumerationCell key={rowIdx}>{rowIdx}</EnumerationCell>);
       if (row.length > 1) {
         row.map((column, columnIdx) => {
           cells.push(<Cell key={`${rowIdx}-${columnIdx}`} live={column} />);
@@ -46,6 +46,7 @@ export const GameView = ({ viewModel }: Props) => {
         <StartGameBTN onClick={viewModel.onClickStartGameBtn}>Start</StartGameBTN>
         <StopGameBTN onClick={viewModel.onClickStopGameBtn}>Stop</StopGameBTN>
         <ResetGameBTN onClick={viewModel.onClickResetGameBtn}>Reset</ResetGameBTN>
+        <br></br>
         {_generateGrids()}
       </>
     );
