@@ -159,7 +159,6 @@ const GosperGliderGun = (matrixCopy: Number[][]) => {
   matrixCopy[27][45] = 1;
 };
 
-
 export const Seeds = {  
   "Random": (matrixCopy: Number[][]) => Random(matrixCopy),
   "Beehive": (matrixCopy: Number[][]) => Beehive(matrixCopy),

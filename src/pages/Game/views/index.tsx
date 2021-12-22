@@ -42,10 +42,10 @@ export const GameView = ({ viewModel }: Props) => {
   const GamesGrid = () => {
     return (
       <>
-        <RandomInitializationBTN onClick={viewModel.onClickRandomBtn}>Get Random</RandomInitializationBTN>
-        <StartGameBTN onClick={viewModel.onClickStartGameBtn}>Start</StartGameBTN>
-        <StopGameBTN onClick={viewModel.onClickStopGameBtn}>Stop</StopGameBTN>
-        <ResetGameBTN onClick={viewModel.onClickResetGameBtn}>Reset</ResetGameBTN>
+        <RandomInitializationBTN onClick={(e) => viewModel.onClickRandomBtn(e)}>Get Random</RandomInitializationBTN>
+        <StartGameBTN onClick={(e) => viewModel.onClickStartGameBtn(e)}>Start</StartGameBTN>
+        <StopGameBTN onClick={(e) => viewModel.onClickStopGameBtn(e)}>Stop</StopGameBTN>
+        <ResetGameBTN onClick={(e) => viewModel.onClickResetGameBtn(e)}>Reset</ResetGameBTN>
         <br></br>
         {_generateGrids()}
       </>

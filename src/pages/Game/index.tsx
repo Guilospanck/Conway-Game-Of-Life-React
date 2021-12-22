@@ -8,10 +8,15 @@ import { useGameViewModel } from "./viewModels/gameViewModel";
 
 /** Components */
 
+/** Context */
+import { GameContextProvider } from "./context/gameContext";
+
 export const Game = () => {
   const viewModel = useGameViewModel();
 
   return (
-    <GameView viewModel={viewModel} />
+    <GameContextProvider>
+      <GameView viewModel={viewModel} />
+    </GameContextProvider>
   );
 };

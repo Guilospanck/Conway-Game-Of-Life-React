@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Seeds } from '../../../shared/seeds';
+import { GameContext } from "../context/gameContext";
 
 export interface IUseGameViewModel {
   onClickRandomBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
@@ -14,13 +15,13 @@ export interface IUseGameViewModel {
 
 export const useGameViewModel = (): IUseGameViewModel => {
 
-  const [matrix, setMatrix] = useState([]);
-  const matrixRef = useRef([]);
-
-  const [gridLength, setGridLength] = useState(50);
-  const [ticksInterval, setTicksInterval] = useState(null);
-
-  const [generationSpeed, setGenerationSpeed] = useState(0.2);
+  const {
+    matrix, setMatrix,
+    matrixRef,
+    ticksInterval, setTicksInterval,
+    generationSpeed, setGenerationSpeed,
+    gridLength, setGridLength
+  } = useContext(GameContext);
 
   const _generateMatrix = () => {
     const matrixArray = [];
