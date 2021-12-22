@@ -1,21 +1,21 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { IUseGameGridViewModel } from "../../viewModels/gameGridViewModel";
 import {
   Grid, RowGrid, ColumnGrid, Cell, EnumerationCell,
+  Container, GridContainer
 } from './styles';
 
 type Props = {
   viewModel: IUseGameGridViewModel
 };
 
-export const GameGridView = ({ viewModel }: Props) => {
+const MemoizedGrid = React.memo((props: IUseGameGridViewModel) => {
 
-  const _generateGrids = () => {
+  const _getCells = useMemo(() => {
     const cells = [];
-    const rowsNumbers = [];
+    console.log('_getCells')
 
-    viewModel.matrix.map((row, rowIdx) => {
-      rowsNumbers.push(<EnumerationCell key={rowIdx}>{rowIdx}</EnumerationCell>);
+    props.matrix.map((row: [], rowIdx: number) => {
       if (row.length > 1) {
         row.map((column, columnIdx) => {
           cells.push(<Cell key={`${rowIdx}-${columnIdx}`} live={column} />);
@@ -23,19 +23,29 @@ export const GameGridView = ({ viewModel }: Props) => {
       }
     });
 
-    return (
-      <>
-        <RowGrid gridLength={viewModel.gridLength}>{rowsNumbers}</RowGrid>
-        <div style={{ display: 'flex' }}>
-          <ColumnGrid gridLength={viewModel.gridLength}>{rowsNumbers}</ColumnGrid>
-          <Grid gridLength={viewModel.gridLength}>
-            {cells}
-          </Grid>
-        </div>
-      </>
-    );
-  };
+    return cells;
+  }, [props.matrix]);
 
-  return _generateGrids();
+  return (
+    <GridContainer onMouseDown={() => props.onMouseDown()}>
+      <Grid gridLength={props.gridLength} gridTranslate={props.gridTranslate}>
+        {_getCells}
+      </Grid>
+    </GridContainer>
+  );
+});
+
+export const GameGridView = ({ viewModel }: Props) => {
+
+  return (
+    <Container>
+      <MemoizedGrid
+        matrix={viewModel.matrix}
+        onMouseDown={viewModel.onMouseDown}
+        gridTranslate={viewModel.gridTranslate}
+        gridLength={viewModel.gridLength}
+      />
+    </Container>
+  );
 
 };
