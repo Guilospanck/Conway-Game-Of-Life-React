@@ -1,8 +1,8 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Seeds } from '../../../shared/seeds';
 import { GameContext } from "../context/gameContext";
 
-export interface IUseGameViewModel {
+export interface IUseControlsViewModel {
   onClickRandomBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   matrix: [][],
   setMatrix: (matrix: [][]) => void,
@@ -13,7 +13,7 @@ export interface IUseGameViewModel {
   onClickResetGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
 }
 
-export const useGameViewModel = (): IUseGameViewModel => {
+export const useControlsViewModel = (): IUseControlsViewModel => {
 
   const {
     matrix, setMatrix,
