@@ -31,3 +31,12 @@ export const ResetGameBTN = styled.button`
   cursor: pointer;
   border-radius: 5px;
 `;
+
+export const SliderContainer = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+export const Slider = styled.input`
+  
+`;

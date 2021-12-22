@@ -1,16 +1,13 @@
 import React from "react";
 import { IUseControlsViewModel } from "../../viewModels/controlsViewModel";
 import {
-  RandomInitializationBTN, StartGameBTN, StopGameBTN, ResetGameBTN
+  RandomInitializationBTN, StartGameBTN, StopGameBTN, ResetGameBTN,
+  SliderContainer, Slider
 } from './styles';
-
-import { Slider } from '../../../components/slider';
 
 type Props = {
   viewModel: IUseControlsViewModel
 };
-
-const SliderMemoized = React.memo(Slider);
 
 export const ControlsView = ({ viewModel }: Props) => {
 
@@ -20,7 +17,17 @@ export const ControlsView = ({ viewModel }: Props) => {
       <StartGameBTN onClick={(e) => viewModel.onClickStartGameBtn(e)}>Start</StartGameBTN>
       <StopGameBTN onClick={(e) => viewModel.onClickStopGameBtn(e)}>Stop</StopGameBTN>
       <ResetGameBTN onClick={(e) => viewModel.onClickResetGameBtn(e)}>Reset</ResetGameBTN>
-      <SliderMemoized positionCallback={viewModel.onSliderPositionCallback} />
+      <SliderContainer>
+        <Slider
+          type={'range'}
+          id="generationSpeed"
+          name="generationSpeed"
+          min={0}
+          max={100}
+          defaultValue={0}
+          onChange={(e) => viewModel.onSliderPositionCallback(e)}
+        />
+      </SliderContainer>
     </>
   );
 

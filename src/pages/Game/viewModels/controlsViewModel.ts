@@ -11,7 +11,7 @@ export interface IUseControlsViewModel {
   onClickStartGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickStopGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickResetGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
-  onSliderPositionCallback: (position: number) => void,
+  onSliderPositionCallback: (e: React.ChangeEvent<HTMLInputElement>) => void,
 }
 
 export const useControlsViewModel = (): IUseControlsViewModel => {
@@ -139,31 +139,15 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     return 0;
   };
 
-  const onSliderPositionCallback = useCallback((position: number) => {
-    // position: -10 <-> 415
-    switch (true) {
-      case (position < 0):
-        setGenerationSpeed(1);
-        break;
+  const onSliderPositionCallback = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {    
+    const position = parseInt(event.target.value);
 
-      case (position > 0 && position < 100):
-        setGenerationSpeed(0.16);
-        break;
-
-      case (position > 100 && position < 200):
-        setGenerationSpeed(0.0256);
-        break;
-
-      case (position > 200 && position < 300):
-        setGenerationSpeed(0.004096);
-        break;
-
-      case (position > 300):
-        setGenerationSpeed(0.00065536);
-        break;
-      default:
-        break;
+    if(position === 0) {
+      setGenerationSpeed(1);
+      return;
     }
+
+    setGenerationSpeed(1/position);
 
   }, []);
 
