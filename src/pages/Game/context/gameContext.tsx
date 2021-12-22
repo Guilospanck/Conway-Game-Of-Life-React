@@ -22,7 +22,7 @@ export const GameContextProvider = ({ children }) => {
   const [gridLength, setGridLength] = useState(50);
   const [ticksInterval, setTicksInterval] = useState(null);
 
-  const [generationSpeed, setGenerationSpeed] = useState(0.2);
+  const [generationSpeed, setGenerationSpeed] = useState(1);
 
   const defaultContext: IGameContext = {
     matrix, setMatrix,

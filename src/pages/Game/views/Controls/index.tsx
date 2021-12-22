@@ -4,9 +4,13 @@ import {
   RandomInitializationBTN, StartGameBTN, StopGameBTN, ResetGameBTN
 } from './styles';
 
+import { Slider } from '../../../components/slider';
+
 type Props = {
   viewModel: IUseControlsViewModel
 };
+
+const SliderMemoized = React.memo(Slider);
 
 export const ControlsView = ({ viewModel }: Props) => {
 
@@ -16,6 +20,7 @@ export const ControlsView = ({ viewModel }: Props) => {
       <StartGameBTN onClick={(e) => viewModel.onClickStartGameBtn(e)}>Start</StartGameBTN>
       <StopGameBTN onClick={(e) => viewModel.onClickStopGameBtn(e)}>Stop</StopGameBTN>
       <ResetGameBTN onClick={(e) => viewModel.onClickResetGameBtn(e)}>Reset</ResetGameBTN>
+      <SliderMemoized positionCallback={viewModel.onSliderPositionCallback} />
     </>
   );
 
