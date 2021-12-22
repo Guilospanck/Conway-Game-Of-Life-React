@@ -38,7 +38,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const removeMouseMoveEventListener = useCallback(() => window.removeEventListener('mousemove', onMouseMove), []);
 
   const onMouseMove = useCallback((e: MouseEvent) => {
-    console.log('hey')
     let newPosX = gridTranslate.x + (e.x * 0.5);
     let newPosY = gridTranslate.y + (e.y * 0.5);
     setGridTranslate({ x: newPosX, y: newPosY })

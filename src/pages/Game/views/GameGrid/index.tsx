@@ -13,7 +13,6 @@ const MemoizedGrid = React.memo((props: IUseGameGridViewModel) => {
 
   const _getCells = useMemo(() => {
     const cells = [];
-    console.log('_getCells')
 
     props.matrix.map((row: [], rowIdx: number) => {
       if (row.length > 1) {
