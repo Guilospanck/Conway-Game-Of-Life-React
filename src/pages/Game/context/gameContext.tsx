@@ -9,7 +9,9 @@ interface IGameContext {
   setTicksInterval: (ticksInterval: NodeJS.Timer) => void,
   generationSpeed: number,
   setGenerationSpeed: (generationSpeed: number) => void,
-  matrixRef: React.MutableRefObject<any[]>
+  matrixRef: React.MutableRefObject<any[]>,
+  cellSize: number,
+  setCellSize: (cellSize: number) => void,
 };
 
 export const GameContext = createContext<IGameContext | null>(null);
@@ -24,12 +26,16 @@ export const GameContextProvider = ({ children }) => {
 
   const [generationSpeed, setGenerationSpeed] = useState(1);
 
+  const [cellSize, setCellSize] = useState(20);
+
   const defaultContext: IGameContext = {
     matrix, setMatrix,
     gridLength, setGridLength,
     ticksInterval, setTicksInterval,
     generationSpeed, setGenerationSpeed,
-    matrixRef
+    matrixRef,
+    cellSize,
+    setCellSize
   };
 
   return <GameContext.Provider value={defaultContext}> {children} </GameContext.Provider>
