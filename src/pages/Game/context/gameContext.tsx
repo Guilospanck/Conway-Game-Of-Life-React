@@ -10,10 +10,10 @@ interface IGameContext {
   matrixRef: React.MutableRefObject<any[]>,
   cellSize: number,
   setCellSize: (cellSize: number) => void,
-  numberOfXCells: number,
-  setNumberOfXCells: (numberOfXCells: number) => void,
-  numberOfYCells: number,
-  setNumberOfYCells: (numberOfYCells: number) => void,
+  canvasWidth: number,
+  setCanvasWidth: (canvasWidth: number) => void,
+  canvasHeight: number,
+  setCanvasHeight: (canvasHeight: number) => void,
 };
 
 export const GameContext = createContext<IGameContext | null>(null);
@@ -28,8 +28,9 @@ export const GameContextProvider = ({ children }) => {
   const [generationSpeed, setGenerationSpeed] = useState(1);
 
   const [cellSize, setCellSize] = useState(20);
-  const [numberOfXCells, setNumberOfXCells] = useState(0);
-  const [numberOfYCells, setNumberOfYCells] = useState(0);
+
+  const [canvasWidth, setCanvasWidth] = useState(800);
+  const [canvasHeight, setCanvasHeight] = useState(600);
 
   const defaultContext: IGameContext = {
     matrix, setMatrix,
@@ -37,8 +38,8 @@ export const GameContextProvider = ({ children }) => {
     generationSpeed, setGenerationSpeed,
     matrixRef,
     cellSize, setCellSize,
-    numberOfXCells, setNumberOfXCells,
-    numberOfYCells, setNumberOfYCells,
+    canvasWidth, setCanvasWidth,
+    canvasHeight, setCanvasHeight
   };
 
   return <GameContext.Provider value={defaultContext}> {children} </GameContext.Provider>

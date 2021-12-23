@@ -16,16 +16,17 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     matrix, setMatrix,
     matrixRef,
     ticksInterval, setTicksInterval,
-    generationSpeed, setGenerationSpeed,
-    numberOfXCells, numberOfYCells
+    generationSpeed, setGenerationSpeed,    
+    canvasWidth,
+    canvasHeight
   } = useContext(GameContext);
 
   const _generateMatrix = () => {
     const matrixArray = [];
 
-    for (let i = 0; i < numberOfXCells; i++) {
+    for (let i = 0; i < canvasWidth; i++) {
       matrixArray[i] = [];
-      for (let j = 0; j < numberOfYCells; j++) {
+      for (let j = 0; j < canvasHeight; j++) {
         matrixArray[i][j] = 0;
       }
     }
@@ -44,7 +45,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
   useEffect(() => {
     _generateMatrix();
-  }, [numberOfXCells, numberOfYCells]);
+  }, [canvasWidth, canvasHeight]);
 
   const onClickRandomBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -111,7 +112,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
   };
 
   const _verifyLiveNeighbours = (row: number, column: number, originalMatrix: number[][]) => {
-    if (row >= 1 && row <= numberOfXCells - 2 && column >= 1 && column <= numberOfYCells - 2) {
+    if (row >= 1 && row <= canvasWidth - 2 && column >= 1 && column <= canvasHeight - 2) {
 
       const leftNeighbor = originalMatrix[row][column - 1];
       const rightNeighbor = originalMatrix[row][column + 1];

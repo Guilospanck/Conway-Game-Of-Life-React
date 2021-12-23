@@ -14,8 +14,6 @@ export const GameGridView = ({ viewModel }: Props) => {
     <Container>
       <CanvasStyled
         ref={viewModel.canvasRef}
-        width="800"
-        height="600"
       />
     </Container>
   );
