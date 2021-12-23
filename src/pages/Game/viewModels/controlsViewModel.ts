@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Seeds } from '../../../shared/seeds';
 import { GameContext } from "../context/gameContext";
 
@@ -8,6 +8,7 @@ export interface IUseControlsViewModel {
   onClickStopGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickResetGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onSliderPositionCallback: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  gameStarted: boolean
 }
 
 export const useControlsViewModel = (): IUseControlsViewModel => {
@@ -19,8 +20,10 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     generationSpeed, setGenerationSpeed,    
     canvasWidth,
     canvasHeight,
-    _generateMatrix
+    generateMatrix
   } = useContext(GameContext);  
+
+  const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
     if (ticksInterval === null) return;
@@ -33,9 +36,10 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
   const onClickRandomBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    if(gameStarted) return;
 
     const matrixCopy = [...matrix];
-    Seeds["GosperGliderGun"](matrixCopy);
+    Seeds["Exploder"](matrixCopy);
 
     matrixRef.current = matrixCopy;
     setMatrix(matrixCopy);
@@ -48,17 +52,24 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
     const ticks = setInterval(() => _verifyPopulationAndUpdateIt(), generationSpeed * 1000);
     setTicksInterval(ticks);
+    setGameStarted(true);
   };
 
   const onClickStopGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    if(!gameStarted) return;
+    
     clearInterval(ticksInterval);
     setTicksInterval(null);
+    setGameStarted(false);
   };
 
   const onClickResetGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
     onClickStopGameBtn(e);
-    _generateMatrix();
+    generateMatrix(true);
+    setGameStarted(false);
   };
 
   const _verifyPopulationAndUpdateIt = () => {
@@ -136,7 +147,8 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     onClickStartGameBtn,
     onClickStopGameBtn,
     onClickResetGameBtn,
-    onSliderPositionCallback
+    onSliderPositionCallback,
+    gameStarted
   };
 
 };

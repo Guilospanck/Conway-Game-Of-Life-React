@@ -4,8 +4,8 @@ export const GameView = ({ GameGridComponent, ControlsComponent }) => {
 
   return (
     <>
-      <ControlsComponent />
       <GameGridComponent />
+      <ControlsComponent />
     </>
   );
 };

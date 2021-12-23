@@ -13,7 +13,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
     dragRef,
-    _generateMatrix
+    generateMatrix
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -25,6 +25,11 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const isMouseDown = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const [drag, setDrag] = useState({ x: 0, y: 0 });
+
+  // Canvas Configs
+  const FILL_STYLE = "rgb(100, 240, 150)";
+  const STROKE_STYLE = "rgb(90, 90, 90)";
+  const LINE_WIDTH = 1;
 
   useEffect(() => {
     _getNewCanvasSize();
@@ -50,7 +55,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   useEffect(() => {
     _initialCanvasDrawing();    
-    _generateMatrix();
+    generateMatrix();
     _populateGrid();
   }, [canvasHeight, canvasWidth]);
 
@@ -60,9 +65,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     canvas.height = canvasHeight;
 
     const context = canvas.getContext("2d");
-    context.fillStyle = "rgb(100, 240, 150)";
-    context.strokeStyle = "rgb(90, 90, 90)";
-    context.lineWidth = 1;
+    context.fillStyle = FILL_STYLE;
+    context.strokeStyle = STROKE_STYLE;
+    context.lineWidth = LINE_WIDTH;
 
     contextRef.current = context;
     setContextState(context);
