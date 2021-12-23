@@ -11,7 +11,7 @@ type Props = {
 export const GameGridView = ({ viewModel }: Props) => {
 
   return (
-    <Container>
+    <Container id="canvas-container">
       <CanvasStyled
         ref={viewModel.canvasRef}
       />

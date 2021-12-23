@@ -10,8 +10,8 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const {
     matrix,
     cellSize,
-    canvasWidth,
-    canvasHeight,
+    canvasWidth, setCanvasWidth,
+    canvasHeight, setCanvasHeight,
     dragRef,
   } = useContext(GameContext);
 
@@ -32,10 +32,13 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     canvasRef.current.addEventListener('mouseup', _onPointerUp);
     canvasRef.current.addEventListener('mousemove', _onPointerMove);
 
+    window.addEventListener('resize', _changeCanvasWidthAndHeightOnResize);
+
     return function cleanup() {
       canvasRef.current.removeEventListener('mousedown', _onPointerDown);
       canvasRef.current.removeEventListener('mouseup', _onPointerUp);
       canvasRef.current.removeEventListener('mousemove', _onPointerMove);
+      window.removeEventListener('resize', _changeCanvasWidthAndHeightOnResize);
     }
   }, []);
 
@@ -43,6 +46,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     _populateGrid();
   }, [matrix, drag]);
 
+  useEffect(() => {
+    _initialCanvasDrawing();
+  }, [canvasHeight, canvasWidth]);
 
   const _initialCanvasDrawing = () => {
     const canvas = canvasRef.current;
@@ -118,6 +124,18 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
     setDrag({ x, y });
 
+  }, []);
+
+  const _changeCanvasWidthAndHeightOnResize = useCallback(() => {
+    const canvasContainer = document.getElementById("canvas-container");
+    const pixelWidth = canvasContainer.offsetWidth;
+    const pixelHeight = canvasContainer.offsetHeight;
+    
+    const newCanvasWidth = pixelWidth - (pixelWidth % cellSize);
+    const newCanvasHeight = pixelHeight - (pixelHeight % cellSize) + 1;
+
+    setCanvasWidth(newCanvasWidth);
+    setCanvasHeight(newCanvasHeight);
   }, []);
 
   return {
