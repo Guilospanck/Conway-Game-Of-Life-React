@@ -14,6 +14,7 @@ interface IGameContext {
   setCanvasWidth: (canvasWidth: number) => void,
   canvasHeight: number,
   setCanvasHeight: (canvasHeight: number) => void,
+  dragRef: React.MutableRefObject<{ x: number; y: number; }>
 };
 
 export const GameContext = createContext<IGameContext | null>(null);
@@ -32,6 +33,8 @@ export const GameContextProvider = ({ children }) => {
   const [canvasWidth, setCanvasWidth] = useState(800);
   const [canvasHeight, setCanvasHeight] = useState(600);
 
+  const dragRef = useRef({ x: 0, y: 0 });
+
   const defaultContext: IGameContext = {
     matrix, setMatrix,
     ticksInterval, setTicksInterval,
@@ -39,7 +42,8 @@ export const GameContextProvider = ({ children }) => {
     matrixRef,
     cellSize, setCellSize,
     canvasWidth, setCanvasWidth,
-    canvasHeight, setCanvasHeight
+    canvasHeight, setCanvasHeight,
+    dragRef
   };
 
   return <GameContext.Provider value={defaultContext}> {children} </GameContext.Provider>

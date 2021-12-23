@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { GameContext } from "../context/gameContext";
 
 export interface IUseGameGridViewModel {
@@ -11,7 +11,8 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     matrix,
     cellSize,
     canvasWidth,
-    canvasHeight
+    canvasHeight,
+    dragRef,
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -66,7 +67,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     for (let j = 0; j < rows; j++) {
       for (let i = 0; i < matrix[j].length; i++) {
         if (matrix[j][i] === 1) {
-          contextRef.current.fillRect(i * cellSize + 1 + drag.x, j * cellSize + 1 + drag.y, cellSize - 1, cellSize - 1);
+          contextRef.current.fillRect(i * cellSize + 1 + dragRef.current.x, j * cellSize + 1 + dragRef.current.y, cellSize - 1, cellSize - 1);
         }
       }
     }
@@ -74,14 +75,14 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   };
 
   const _drawGrid = () => {
-    for (let i = drag.x % cellSize; i < canvasWidth; i += cellSize) {
+    for (let i = dragRef.current.x % cellSize; i < canvasWidth; i += cellSize) {
       contextRef.current.beginPath();
       contextRef.current.moveTo(i + 0.5, 0);
       contextRef.current.lineTo(i + 0.5, canvasHeight);
       contextRef.current.stroke();
     }
 
-    for (let j = drag.y % cellSize; j < canvasHeight; j += cellSize) {
+    for (let j = dragRef.current.y % cellSize; j < canvasHeight; j += cellSize) {
       contextRef.current.beginPath();
       contextRef.current.moveTo(0, j + 0.5);
       contextRef.current.lineTo(canvasWidth, j + 0.5);
@@ -94,6 +95,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   };
 
   const _onPointerDown = useCallback((e: MouseEvent) => {
+    e.preventDefault();
     dragStart.current.x = e.x;
     dragStart.current.y = e.y;
 
@@ -101,16 +103,21 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   }, []);
 
   const _onPointerUp = useCallback((e: MouseEvent) => {
+    e.preventDefault();
     isMouseDown.current = false;
   }, []);
 
   const _onPointerMove = useCallback((e: MouseEvent) => {
+    e.preventDefault();
     if (!isMouseDown.current) return;
 
-    const x = e.x - dragStart.current.x;
-    const y = e.y - dragStart.current.y;
+    const x = e.movementX + dragRef.current.x;
+    const y = e.movementY + dragRef.current.y;
+
+    dragRef.current = { x, y };
 
     setDrag({ x, y });
+
   }, []);
 
   return {
