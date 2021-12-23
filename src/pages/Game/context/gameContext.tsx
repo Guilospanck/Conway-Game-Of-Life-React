@@ -14,7 +14,8 @@ interface IGameContext {
   setCanvasWidth: (canvasWidth: number) => void,
   canvasHeight: number,
   setCanvasHeight: (canvasHeight: number) => void,
-  dragRef: React.MutableRefObject<{ x: number; y: number; }>
+  dragRef: React.MutableRefObject<{ x: number; y: number; }>,
+  _generateMatrix: () => void
 };
 
 export const GameContext = createContext<IGameContext | null>(null);
@@ -30,10 +31,24 @@ export const GameContextProvider = ({ children }) => {
 
   const [cellSize, setCellSize] = useState(20);
 
-  const [canvasWidth, setCanvasWidth] = useState(800);
-  const [canvasHeight, setCanvasHeight] = useState(600);
+  const [canvasWidth, setCanvasWidth] = useState(0);
+  const [canvasHeight, setCanvasHeight] = useState(0);
 
   const dragRef = useRef({ x: 0, y: 0 });
+
+  const _generateMatrix = () => {
+    const matrixArray = [...matrix];
+
+    for (let i = 0; i < canvasWidth; i++) {
+      if (!matrixArray[i]) matrixArray[i] = [];
+      for (let j = 0; j < canvasHeight; j++) {
+        if (!matrixArray[i][j]) matrixArray[i][j] = 0;
+      }
+    }
+    
+    matrixRef.current = matrixArray;
+    setMatrix(matrixArray);
+  };
 
   const defaultContext: IGameContext = {
     matrix, setMatrix,
@@ -43,7 +58,8 @@ export const GameContextProvider = ({ children }) => {
     cellSize, setCellSize,
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
-    dragRef
+    dragRef,
+    _generateMatrix
   };
 
   return <GameContext.Provider value={defaultContext}> {children} </GameContext.Provider>

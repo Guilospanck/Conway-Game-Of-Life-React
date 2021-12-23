@@ -13,6 +13,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
     dragRef,
+    _generateMatrix
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -26,6 +27,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const [drag, setDrag] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    _getNewCanvasSize();
     _initialCanvasDrawing();
 
     canvasRef.current.addEventListener('mousedown', _onPointerDown);
@@ -47,7 +49,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   }, [matrix, drag]);
 
   useEffect(() => {
-    _initialCanvasDrawing();
+    _initialCanvasDrawing();    
+    _generateMatrix();
+    _populateGrid();
   }, [canvasHeight, canvasWidth]);
 
   const _initialCanvasDrawing = () => {
@@ -127,16 +131,20 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   }, []);
 
   const _changeCanvasWidthAndHeightOnResize = useCallback(() => {
+    _getNewCanvasSize();
+  }, []);
+
+  const _getNewCanvasSize = () => {
     const canvasContainer = document.getElementById("canvas-container");
     const pixelWidth = canvasContainer.offsetWidth;
     const pixelHeight = canvasContainer.offsetHeight;
-    
+
     const newCanvasWidth = pixelWidth - (pixelWidth % cellSize);
     const newCanvasHeight = pixelHeight - (pixelHeight % cellSize) + 1;
 
     setCanvasWidth(newCanvasWidth);
     setCanvasHeight(newCanvasHeight);
-  }, []);
+  };
 
   return {
     canvasRef,

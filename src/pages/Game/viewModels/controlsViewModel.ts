@@ -18,22 +18,9 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     ticksInterval, setTicksInterval,
     generationSpeed, setGenerationSpeed,    
     canvasWidth,
-    canvasHeight
-  } = useContext(GameContext);
-
-  const _generateMatrix = () => {
-    const matrixArray = [];
-
-    for (let i = 0; i < canvasWidth; i++) {
-      matrixArray[i] = [];
-      for (let j = 0; j < canvasHeight; j++) {
-        matrixArray[i][j] = 0;
-      }
-    }
-
-    matrixRef.current = matrixArray;
-    setMatrix(matrixArray);
-  };
+    canvasHeight,
+    _generateMatrix
+  } = useContext(GameContext);  
 
   useEffect(() => {
     if (ticksInterval === null) return;
@@ -43,9 +30,6 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     setTicksInterval(ticks);
   }, [generationSpeed]);
 
-  useEffect(() => {
-    _generateMatrix();
-  }, [canvasWidth, canvasHeight]);
 
   const onClickRandomBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
