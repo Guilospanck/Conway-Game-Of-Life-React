@@ -4,10 +4,6 @@ import { GameContext } from "../context/gameContext";
 
 export interface IUseControlsViewModel {
   onClickRandomBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
-  matrix: [][],
-  setMatrix: (matrix: [][]) => void,
-  gridLength: number,
-  setGridLength: (gridLength: number) => void,
   onClickStartGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickStopGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickResetGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
@@ -21,15 +17,15 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     matrixRef,
     ticksInterval, setTicksInterval,
     generationSpeed, setGenerationSpeed,
-    gridLength, setGridLength
+    numberOfXCells, numberOfYCells
   } = useContext(GameContext);
 
   const _generateMatrix = () => {
     const matrixArray = [];
 
-    for (let i = 0; i < gridLength; i++) {
+    for (let i = 0; i < numberOfXCells; i++) {
       matrixArray[i] = [];
-      for (let j = 0; j < gridLength; j++) {
+      for (let j = 0; j < numberOfYCells; j++) {
         matrixArray[i][j] = 0;
       }
     }
@@ -48,13 +44,12 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
   useEffect(() => {
     _generateMatrix();
-  }, []);
+  }, [numberOfXCells, numberOfYCells]);
 
   const onClickRandomBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
     const matrixCopy = [...matrix];
-
     Seeds["GosperGliderGun"](matrixCopy);
 
     matrixRef.current = matrixCopy;
@@ -116,7 +111,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
   };
 
   const _verifyLiveNeighbours = (row: number, column: number, originalMatrix: number[][]) => {
-    if (row >= 1 && row <= gridLength - 2 && column >= 1 && column <= gridLength - 2) {
+    if (row >= 1 && row <= numberOfXCells - 2 && column >= 1 && column <= numberOfYCells - 2) {
 
       const leftNeighbor = originalMatrix[row][column - 1];
       const rightNeighbor = originalMatrix[row][column + 1];
@@ -153,10 +148,6 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
   return {
     onClickRandomBtn,
-    matrix,
-    setMatrix,
-    gridLength,
-    setGridLength,
     onClickStartGameBtn,
     onClickStopGameBtn,
     onClickResetGameBtn,

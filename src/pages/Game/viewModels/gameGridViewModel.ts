@@ -8,19 +8,26 @@ export interface IUseGameGridViewModel {
 export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   const {
-    cellSize
+    matrix,
+    cellSize,
+    numberOfXCells, setNumberOfXCells,
+    numberOfYCells, setNumberOfYCells,
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
-  // const [numberOfXCells, setNumberOfXCells] = useState(0);
-  // const [numberOfYCells, setNumberOfYCells] = useState(0);
-
-  const [contextState, setContextState] = useState(null);
-
+  const [_, setContextState] = useState(null);
 
   useEffect(() => {
+    _initialCanvasDrawing();
+  }, []);
+
+  useEffect(() => {
+    _populateGrid();
+  }, [matrix]);
+
+  const _initialCanvasDrawing = () => {
     const canvas = canvasRef.current;
     const width = canvas.width;
     const height = canvas.height;
@@ -32,25 +39,17 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
     contextRef.current = context;
 
-    console.log(width)
-    console.log(height)
-
     const numberOfXCells = width / cellSize;
     const numberOfYCells = height / cellSize;
 
-    console.log(numberOfXCells)
-    console.log(numberOfYCells)
+    _drawGrid(numberOfXCells, numberOfYCells);
 
-    // setNumberOfXCells(numberOfXCells);
-    // setNumberOfYCells(numberOfYCells);
-
-    drawGrid(numberOfXCells, numberOfYCells);
-
+    setNumberOfXCells(numberOfXCells);
+    setNumberOfYCells(numberOfYCells);
     setContextState(context);
+  };
 
-  }, []);
-
-  const drawGrid = (numberOfXCells: number, numberOfYCells: number) => {
+  const _drawGrid = (numberOfXCells: number, numberOfYCells: number) => {
     for (let i = 0; i < numberOfXCells; i++) {
       contextRef.current.beginPath();
       contextRef.current.moveTo(i * cellSize - 0.5, 0);
@@ -66,6 +65,27 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
       contextRef.current.stroke();
       contextRef.current.closePath();
     }
+  };
+
+  const _populateGrid = () => {
+    _clearGrid();
+    _drawGrid(numberOfXCells, numberOfYCells);
+
+    const rows = matrix.length;
+
+    for(let j = 0; j < rows; j++){      
+      for(let i = 0; i < matrix[j].length; i++){
+        if(matrix[j][i] === 1){
+          // fillRect(x, y, width, height)
+          contextRef.current.fillRect(i*cellSize-0.5, j*cellSize-0.5, cellSize, cellSize);
+        }
+      }
+    }
+
+  };
+
+  const _clearGrid = () => {
+    contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
   };
 
   return {
