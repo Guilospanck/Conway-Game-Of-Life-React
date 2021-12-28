@@ -1,19 +1,21 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { GameContext } from "../context/gameContext";
 
 export interface IUseGameGridViewModel {
   canvasRef: any,
+  onWheelEvent: (e: React.WheelEvent<HTMLCanvasElement>) => void
 }
 
 export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   const {
     matrix,
-    cellSize,
+    cellSize, setCellSize,
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
     dragRef,
-    generateMatrix
+    generateMatrix,
+    scaleRef
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -50,7 +52,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   useEffect(() => {
     _populateGrid();
-  }, [matrix, drag]);
+  }, [matrix, drag, cellSize]);
 
   useEffect(() => {
     _initialCanvasDrawing();
@@ -152,8 +154,36 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     setCanvasHeight(newCanvasHeight);
   };
 
+  const onWheelEvent = (e: React.WheelEvent<HTMLCanvasElement>) => {
+    const lastScale = scaleRef.current;
+    let scaleRefCopy = scaleRef.current;
+
+    scaleRefCopy += e.deltaY * -0.01;
+
+    // restrict scale
+    scaleRefCopy = Math.min(Math.max(-4, scaleRefCopy), 4);
+    scaleRef.current = scaleRefCopy;
+
+    let cellSizeCopy = 20;
+
+    const isZoomingIn = lastScale < scaleRefCopy;
+    const isZoomLimit = lastScale === scaleRefCopy;
+
+    if (scaleRefCopy === 0 || isZoomLimit) {
+      return;
+    }
+
+    if (scaleRefCopy < 0) scaleRefCopy *= -1;
+
+    if (isZoomingIn) cellSizeCopy *= scaleRefCopy;
+    else cellSizeCopy /= scaleRefCopy;
+
+    setCellSize(cellSizeCopy);
+  };
+
   return {
     canvasRef,
+    onWheelEvent
   };
 
 };

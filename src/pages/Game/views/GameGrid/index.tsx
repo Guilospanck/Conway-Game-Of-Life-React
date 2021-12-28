@@ -14,6 +14,7 @@ export const GameGridView = ({ viewModel }: Props) => {
     <Container id="canvas-container">
       <CanvasStyled
         ref={viewModel.canvasRef}
+        onWheel={(e) => viewModel.onWheelEvent(e)}
       />
     </Container>
   );
