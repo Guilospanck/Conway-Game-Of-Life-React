@@ -9,7 +9,7 @@
     "start": "node index",
     "start:dev": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "predeploy": "yarn build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:watch": "yarn test -- --watch",
