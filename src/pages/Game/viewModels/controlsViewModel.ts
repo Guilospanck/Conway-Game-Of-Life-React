@@ -133,8 +133,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
   }, []);
 
   const onSelectChange = (seed: string) => {
-    if(seed === 'Select') return;
-    if (gameStarted) return;
+    if(seed === 'Select' || gameStarted) return;
 
     const matrixCopy = [...matrix];
 

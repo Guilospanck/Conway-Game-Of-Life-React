@@ -19,7 +19,8 @@ module.exports = merge(common, {
       path: '.env.development'
     }),
     new HtmlWebpackPlugin({
-      template: 'template.dev.html'
+      template: 'template.dev.html',
+      favicon: './src/assets/png/game2.png'
     })
   ]
 })
