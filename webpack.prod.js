@@ -9,7 +9,6 @@ module.exports = merge(common, {
   mode: 'production',
   externals: {
     'react': 'React',
-    'axios': 'axios',
     'react-dom': 'ReactDOM',
   },
   optimization: {
