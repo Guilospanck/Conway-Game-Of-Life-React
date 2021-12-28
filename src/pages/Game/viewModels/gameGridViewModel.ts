@@ -27,6 +27,12 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const isMouseDown = useRef(false);
   const [drag, setDrag] = useState({ x: 0, y: 0 });
 
+  // Zoom
+  const MIN_ZOOM = -3;
+  const MAX_ZOOM = 3;
+  const MAX_CELL_SIZE = 160;
+  const MIN_CELL_SIZE = 2.5;
+
   // Canvas Configs
   const FILL_STYLE = "rgb(100, 240, 150)";
   const STROKE_STYLE = "rgb(90, 90, 90)";
@@ -161,22 +167,24 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     scaleRefCopy += e.deltaY * -0.01;
 
     // restrict scale
-    scaleRefCopy = Math.min(Math.max(-4, scaleRefCopy), 4);
+    scaleRefCopy = Math.min(Math.max(MIN_ZOOM, scaleRefCopy), MAX_ZOOM);
     scaleRef.current = scaleRefCopy;
-
-    let cellSizeCopy = 20;
 
     const isZoomingIn = lastScale < scaleRefCopy;
     const isZoomLimit = lastScale === scaleRefCopy;
 
-    if (scaleRefCopy === 0 || isZoomLimit) {
+    if (isZoomLimit) {
       return;
     }
 
-    if (scaleRefCopy < 0) scaleRefCopy *= -1;
+    let cellSizeCopy = cellSize;
 
-    if (isZoomingIn) cellSizeCopy *= scaleRefCopy;
-    else cellSizeCopy /= scaleRefCopy;
+    if (isZoomingIn) cellSizeCopy *= 2;
+    else cellSizeCopy /= 2;
+
+    // limit cellsize
+    if (cellSizeCopy > MAX_CELL_SIZE) cellSizeCopy = MAX_CELL_SIZE;
+    else if (cellSizeCopy < MIN_CELL_SIZE) cellSizeCopy = MIN_CELL_SIZE;
 
     setCellSize(cellSizeCopy);
   };
