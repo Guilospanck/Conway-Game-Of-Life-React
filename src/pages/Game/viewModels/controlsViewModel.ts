@@ -1,14 +1,16 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Seeds } from '../../../shared/seeds';
+import { Seeds, SeedsNameArray, SeedsNameToShowInTheScreen } from '../../../shared/seeds';
 import { GameContext } from "../context/gameContext";
 
 export interface IUseControlsViewModel {
-  onClickRandomBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickStartGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickStopGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickResetGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onSliderPositionCallback: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  gameStarted: boolean
+  gameStarted: boolean,
+  SeedsNameArray: string[],
+  onSelectChange: (seed: string) => void
+  SeedsNameToShowInTheScreen: Object
 }
 
 export const useControlsViewModel = (): IUseControlsViewModel => {
@@ -17,11 +19,11 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     matrix, setMatrix,
     matrixRef,
     ticksInterval, setTicksInterval,
-    generationSpeed, setGenerationSpeed,    
+    generationSpeed, setGenerationSpeed,
     canvasWidth,
     canvasHeight,
     generateMatrix
-  } = useContext(GameContext);  
+  } = useContext(GameContext);
 
   const [gameStarted, setGameStarted] = useState(false);
 
@@ -32,18 +34,6 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     const ticks = setInterval(() => _verifyPopulationAndUpdateIt(), generationSpeed * 1000);
     setTicksInterval(ticks);
   }, [generationSpeed]);
-
-
-  const onClickRandomBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if(gameStarted) return;
-
-    const matrixCopy = [...matrix];
-    Seeds["Exploder"](matrixCopy);
-
-    matrixRef.current = matrixCopy;
-    setMatrix(matrixCopy);
-  };
 
   const onClickStartGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -57,8 +47,8 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
   const onClickStopGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if(!gameStarted) return;
-    
+    if (!gameStarted) return;
+
     clearInterval(ticksInterval);
     setTicksInterval(null);
     setGameStarted(false);
@@ -130,25 +120,45 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     return 0;
   };
 
-  const onSliderPositionCallback = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {    
+  const onSliderPositionCallback = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const position = parseInt(event.target.value);
 
-    if(position === 0) {
+    if (position === 0) {
       setGenerationSpeed(1);
       return;
     }
 
-    setGenerationSpeed(1/position);
+    setGenerationSpeed(1 / position);
 
   }, []);
 
+  const onSelectChange = (seed: string) => {
+    if(seed === 'Select') return;
+    if (gameStarted) return;
+
+    const matrixCopy = [...matrix];
+
+    if (seed !== "Random") {
+      Seeds[seed](matrixCopy);
+    } else {
+      const randomPosition = Math.floor(Math.random() * SeedsNameArray.length);
+      const seedName = SeedsNameArray[randomPosition];
+      Seeds[seedName](matrixCopy);
+    }
+
+    matrixRef.current = matrixCopy;
+    setMatrix(matrixCopy);
+  };
+
   return {
-    onClickRandomBtn,
     onClickStartGameBtn,
     onClickStopGameBtn,
     onClickResetGameBtn,
     onSliderPositionCallback,
-    gameStarted
+    gameStarted,
+    SeedsNameArray,
+    onSelectChange,
+    SeedsNameToShowInTheScreen
   };
 
 };

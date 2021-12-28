@@ -2,8 +2,8 @@ import React from "react";
 import { IUseControlsViewModel } from "../../viewModels/controlsViewModel";
 import {
   ButtonsContainer,
-  RandomInitializationBTN, StartGameBTN, StopGameBTN, ResetGameBTN,
-  SliderContainer, Slider
+  StartGameBTN, StopGameBTN, ResetGameBTN,
+  SliderContainer, Slider, Dropdown
 } from './styles';
 
 import SpeedSVG from '../../../../assets/svg/velocity.svg';
@@ -15,8 +15,29 @@ type Props = {
 export const ControlsView = ({ viewModel }: Props) => {
 
   return (
-    <ButtonsContainer>
-      <RandomInitializationBTN onClick={(e) => viewModel.onClickRandomBtn(e)} disabled={viewModel.gameStarted}>Get Random</RandomInitializationBTN>
+    <ButtonsContainer>     
+      <Dropdown
+        id="seeds"
+        name="seeds"
+        onChange={(e) => viewModel.onSelectChange(e.target.value)}
+        disabled={viewModel.gameStarted}
+      >
+        <option key={'Select-0'} value={'Select'} style={{ cursor: 'pointer' }}>
+          SELECT AN INITIAL SEED
+        </option>
+        <option key={'Random-1'} value={'Random'} style={{ cursor: 'pointer' }}>
+          RANDOM
+        </option>
+        {
+          viewModel.SeedsNameArray.map((seed, index) => {
+            return (
+              <option key={index} value={seed} style={{ cursor: 'pointer' }}>
+                {viewModel.SeedsNameToShowInTheScreen[seed].toUpperCase()}
+              </option>
+            )
+          })
+        }
+      </Dropdown>
       <StartGameBTN onClick={(e) => viewModel.onClickStartGameBtn(e)} disabled={viewModel.gameStarted}>Start</StartGameBTN>
       <SliderContainer>
         <SpeedSVG width={30} />
@@ -24,9 +45,9 @@ export const ControlsView = ({ viewModel }: Props) => {
           type={'range'}
           id="generationSpeed"
           name="generationSpeed"
-          min={0}
-          max={100}
-          defaultValue={0}
+          min={1}
+          max={50}
+          defaultValue={1}
           onChange={(e) => viewModel.onSliderPositionCallback(e)}
         />
       </SliderContainer>

@@ -1,13 +1,3 @@
-const Random = (matrixCopy: Number[][]) => {
-  for (let row = 0; row < matrixCopy.length; row++) {
-    const matrixCopyRow = matrixCopy[row];
-    for (let column = 0; column < matrixCopyRow.length; column++) {
-      const randomValue = Math.floor(Math.random() * 2);
-      matrixCopy[row][column] = randomValue;
-    }
-  }
-};
-
 const Beehive = (matrixCopy: Number[][]) => {
   matrixCopy[20][20] = 1;
   matrixCopy[20][21] = 1;
@@ -40,7 +30,7 @@ const Glider = (matrixCopy: Number[][]) => {
   matrixCopy[22][21] = 1;
 };
 
-const SmallExploder = (matrixCopy: Number[][]) => {  
+const SmallExploder = (matrixCopy: Number[][]) => {
   matrixCopy[20][20] = 1;
   matrixCopy[21][19] = 1;
   matrixCopy[21][20] = 1;
@@ -50,7 +40,7 @@ const SmallExploder = (matrixCopy: Number[][]) => {
   matrixCopy[23][20] = 1;
 };
 
-const Exploder = (matrixCopy: Number[][]) => {    
+const Exploder = (matrixCopy: Number[][]) => {
   matrixCopy[20][18] = 1;
   matrixCopy[20][20] = 1;
   matrixCopy[20][22] = 1;
@@ -65,7 +55,7 @@ const Exploder = (matrixCopy: Number[][]) => {
   matrixCopy[24][22] = 1;
 };
 
-const TenCellRow = (matrixCopy: Number[][]) => {    
+const TenCellRow = (matrixCopy: Number[][]) => {
   matrixCopy[20][15] = 1;
   matrixCopy[20][16] = 1;
   matrixCopy[20][17] = 1;
@@ -78,7 +68,7 @@ const TenCellRow = (matrixCopy: Number[][]) => {
   matrixCopy[20][24] = 1;
 };
 
-const LightweightSpaceship = (matrixCopy: Number[][]) => {    
+const LightweightSpaceship = (matrixCopy: Number[][]) => {
   matrixCopy[20][15] = 1;
   matrixCopy[20][16] = 1;
   matrixCopy[20][17] = 1;
@@ -90,7 +80,7 @@ const LightweightSpaceship = (matrixCopy: Number[][]) => {
   matrixCopy[23][17] = 1;
 };
 
-const Tumbler = (matrixCopy: Number[][]) => {    
+const Tumbler = (matrixCopy: Number[][]) => {
   matrixCopy[20][18] = 1;
   matrixCopy[20][19] = 1;
   matrixCopy[20][21] = 1;
@@ -159,8 +149,33 @@ const GosperGliderGun = (matrixCopy: Number[][]) => {
   matrixCopy[27][45] = 1;
 };
 
-export const Seeds = {  
-  "Random": (matrixCopy: Number[][]) => Random(matrixCopy),
+export const SeedsNameArray = [
+  "Beehive",
+  "BlinkerOscillator",
+  "Beacon",
+  "Glider",
+  "SmallExploder",
+  "Exploder",
+  "TenCellRow",
+  "LightweightSpaceship",
+  "Tumbler",
+  "GosperGliderGun"
+];
+
+export const SeedsNameToShowInTheScreen = {
+  "Beehive": "Beehive",
+  "BlinkerOscillator": "Blinker Oscillator",
+  "Beacon": "Beacon",
+  "Glider": "Glider",
+  "SmallExploder": "Small Exploder",
+  "Exploder": "Exploder",
+  "TenCellRow": "Ten Cell Row",
+  "LightweightSpaceship": "Lightweight Spaceship",
+  "Tumbler": "Tumbler",
+  "GosperGliderGun": "Gosper Glider Gun"
+};
+
+export const Seeds = {
   "Beehive": (matrixCopy: Number[][]) => Beehive(matrixCopy),
   "BlinkerOscillator": (matrixCopy: Number[][]) => BlinkerOscillator(matrixCopy),
   "Beacon": (matrixCopy: Number[][]) => Beacon(matrixCopy),
