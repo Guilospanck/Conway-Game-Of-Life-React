@@ -23,7 +23,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   // Pan
   const isMouseDown = useRef(false);
-  const dragStart = useRef({ x: 0, y: 0 });
   const [drag, setDrag] = useState({ x: 0, y: 0 });
 
   // Canvas Configs
@@ -54,7 +53,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   }, [matrix, drag]);
 
   useEffect(() => {
-    _initialCanvasDrawing();    
+    _initialCanvasDrawing();
     generateMatrix();
     _populateGrid();
   }, [canvasHeight, canvasWidth]);
@@ -82,7 +81,12 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     for (let j = 0; j < rows; j++) {
       for (let i = 0; i < matrix[j].length; i++) {
         if (matrix[j][i] === 1) {
-          contextRef.current.fillRect(i * cellSize + 1 + dragRef.current.x, j * cellSize + 1 + dragRef.current.y, cellSize - 1, cellSize - 1);
+          contextRef.current.fillRect(
+            i * cellSize + 1 + dragRef.current.x,
+            j * cellSize + 1 + dragRef.current.y,
+            cellSize - 1,
+            cellSize - 1
+          );
         }
       }
     }
@@ -111,9 +115,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   const _onPointerDown = useCallback((e: MouseEvent) => {
     e.preventDefault();
-    dragStart.current.x = e.x;
-    dragStart.current.y = e.y;
-
     isMouseDown.current = true;
   }, []);
 

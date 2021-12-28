@@ -59,6 +59,23 @@ export const ResetGameBTN = styled.button`
   }
 `;
 
+export const CentralizeGameBTN = styled.button`
+  outline: none;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  padding: 10px;
+  text-transform: uppercase;
+  width: 120px;
+  font-weight: bold;
+  color: #027b2d;
+
+  &:hover {
+    background-color: #78a889;
+    color: white;
+  }
+`;
+
 export const SliderContainer = styled.div`
   display: flex;
   align-items: center;

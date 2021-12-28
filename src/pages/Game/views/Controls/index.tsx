@@ -2,7 +2,7 @@ import React from "react";
 import { IUseControlsViewModel } from "../../viewModels/controlsViewModel";
 import {
   ButtonsContainer,
-  StartGameBTN, StopGameBTN, ResetGameBTN,
+  StartGameBTN, StopGameBTN, ResetGameBTN, CentralizeGameBTN,
   SliderContainer, Slider, Dropdown
 } from './styles';
 
@@ -53,6 +53,7 @@ export const ControlsView = ({ viewModel }: Props) => {
       </SliderContainer>
       <StopGameBTN onClick={(e) => viewModel.onClickStopGameBtn(e)} disabled={!viewModel.gameStarted}>Stop</StopGameBTN>
       <ResetGameBTN onClick={(e) => viewModel.onClickResetGameBtn(e)}>Reset</ResetGameBTN>
+      <CentralizeGameBTN onClick={(e) => viewModel.onClickCentralizeGameBtn(e)}>Centralize</CentralizeGameBTN>
     </ButtonsContainer>
   );
 

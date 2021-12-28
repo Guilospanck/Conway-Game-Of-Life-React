@@ -6,6 +6,7 @@ export interface IUseControlsViewModel {
   onClickStartGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickStopGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onClickResetGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
+  onClickCentralizeGameBtn: (e: React.MouseEvent<HTMLButtonElement>) => void,
   onSliderPositionCallback: (e: React.ChangeEvent<HTMLInputElement>) => void,
   gameStarted: boolean,
   SeedsNameArray: string[],
@@ -22,7 +23,8 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     generationSpeed, setGenerationSpeed,
     canvasWidth,
     canvasHeight,
-    generateMatrix
+    generateMatrix,
+    dragRef
   } = useContext(GameContext);
 
   const [gameStarted, setGameStarted] = useState(false);
@@ -58,8 +60,16 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     e.stopPropagation();
 
     onClickStopGameBtn(e);
+    dragRef.current = { x: 0, y: 0 };
     generateMatrix(true);
     setGameStarted(false);
+  };
+
+  const onClickCentralizeGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
+    dragRef.current = { x: 0, y: 0 };
+    generateMatrix();
   };
 
   const _verifyPopulationAndUpdateIt = () => {
@@ -153,6 +163,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     onClickStartGameBtn,
     onClickStopGameBtn,
     onClickResetGameBtn,
+    onClickCentralizeGameBtn,
     onSliderPositionCallback,
     gameStarted,
     SeedsNameArray,
