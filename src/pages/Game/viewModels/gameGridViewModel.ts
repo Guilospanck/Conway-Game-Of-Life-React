@@ -128,31 +128,32 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     if (isDragging.current) return;
 
     // get mouse click position relative to canvas
-    const x = Math.max(e.offsetX + dragRef.current.x, 0);
-    const y = Math.max(e.offsetY + dragRef.current.y, 0);
+    const x = e.offsetX;
+    const REMOVING_LINE_WIDTH = Math.ceil(e.offsetY - (Math.ceil(e.offsetY / cellSize) * LINE_WIDTH) - (Math.ceil(e.offsetY / cellSize) * (LINE_WIDTH / 4)));
+    const y = Math.max(REMOVING_LINE_WIDTH, 1);
 
     // get canvas width and height at the click moment
     // @ts-ignore
-    const canvasWidthAtClickMoment = e.target.clientWidth as number;
+    const canvasWidthAtClickMoment = e.target.width as number;
     // @ts-ignore
-    const canvasHeightAtClickMoment = e.target.clientHeight as number;
+    const canvasHeightAtClickMoment = e.target.height as number;
 
     // get grid clicked
-    const xGrids = Math.floor(canvasWidthAtClickMoment / cellSize);
-    const yGrids = Math.floor(canvasHeightAtClickMoment / cellSize);
+    const xGrids = Math.round(canvasWidthAtClickMoment / cellSize);
+    const yGrids = Math.round(canvasHeightAtClickMoment / cellSize);
 
     let xPosition = 0;
     let yPosition = 0;
 
-    for (let index = 0; index < xGrids * cellSize; index += 20) {
-      if (x >= index && x < index + 20) {
+    for (let index = 0; index < xGrids * cellSize; index += cellSize) {
+      if (x > index && x <= index + cellSize) {
         break;
       }
       xPosition++;
     }
 
-    for (let index = 0; index < yGrids * cellSize; index += 20) {
-      if (y >= index && y < index + 20) {
+    for (let index = 0; index < yGrids * cellSize; index += cellSize) {
+      if (y > index && y <= index + cellSize) {
         break;
       }
       yPosition++;
@@ -222,9 +223,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     const isZoomingIn = lastScale < scaleRefCopy;
     const isZoomLimit = lastScale === scaleRefCopy;
 
-    if (isZoomLimit) {
-      return;
-    }
+    if (isZoomLimit) return;
 
     let cellSizeCopy = cellSize;
 
