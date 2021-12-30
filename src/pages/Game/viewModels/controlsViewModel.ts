@@ -11,7 +11,9 @@ export interface IUseControlsViewModel {
   gameStarted: boolean,
   SeedsNameArray: string[],
   onSelectChange: (seed: string) => void
-  SeedsNameToShowInTheScreen: Object
+  SeedsNameToShowInTheScreen: Object,
+  seedSelected: string,
+  onSelectFocus: () => void
 }
 
 export const useControlsViewModel = (): IUseControlsViewModel => {
@@ -28,6 +30,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
   } = useContext(GameContext);
 
   const [gameStarted, setGameStarted] = useState(false);
+  const [seedSelected, setSeedSelected] = useState("Select");
 
   useEffect(() => {
     if (ticksInterval === null) return;
@@ -142,6 +145,10 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
   }, []);
 
+  const onSelectFocus = () => {
+    setSeedSelected('Select');
+  };
+
   const onSelectChange = (seed: string) => {
     if(seed === 'Select' || gameStarted) return;
 
@@ -156,6 +163,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     }
 
     matrixRef.current = matrixCopy;
+    setSeedSelected(seed);
     setMatrix(matrixCopy);
   };
 
@@ -168,7 +176,9 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     gameStarted,
     SeedsNameArray,
     onSelectChange,
-    SeedsNameToShowInTheScreen
+    SeedsNameToShowInTheScreen,
+    seedSelected,
+    onSelectFocus
   };
 
 };

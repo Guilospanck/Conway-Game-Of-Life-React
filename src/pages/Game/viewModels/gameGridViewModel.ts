@@ -164,6 +164,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const _onWheelEvent = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    
     const lastScale = scaleRef.current;
     let scaleRefCopy = scaleRef.current;
 
@@ -189,7 +190,10 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     if (cellSizeCopy > MAX_CELL_SIZE) cellSizeCopy = MAX_CELL_SIZE;
     else if (cellSizeCopy < MIN_CELL_SIZE) cellSizeCopy = MIN_CELL_SIZE;
 
-
+    // getMousePosition
+    const x = e.clientX;
+    const y = e.clientY;
+    dragRef.current = { x, y };
 
     setCellSize(cellSizeCopy);
   }, []);

@@ -20,6 +20,8 @@ export const ControlsView = ({ viewModel }: Props) => {
         id="seeds"
         name="seeds"
         onChange={(e) => viewModel.onSelectChange(e.target.value)}
+        onFocus={() => viewModel.onSelectFocus()}
+        value={viewModel.seedSelected}
         disabled={viewModel.gameStarted}
       >
         <option key={'Select-0'} value={'Select'} style={{ cursor: 'pointer' }}>
