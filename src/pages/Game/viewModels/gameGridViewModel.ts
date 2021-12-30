@@ -8,13 +8,14 @@ export interface IUseGameGridViewModel {
 export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   const {
-    matrix,
+    matrix, setMatrix,
     cellSize, setCellSize,
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
     dragRef,
     generateMatrix,
-    scaleRef
+    scaleRef,
+    matrixRef
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -24,6 +25,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   // Pan
   const isMouseDown = useRef(false);
+  const isDragging = useRef(false);
   const [drag, setDrag] = useState({ x: 0, y: 0 });
 
   // Zoom
@@ -122,6 +124,46 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
   };
 
+  const _fillGridOnClick = (e: MouseEvent) => {
+    if (isDragging.current) return;
+
+    // get mouse click position relative to canvas
+    const x = Math.max(e.offsetX + dragRef.current.x, 0);
+    const y = Math.max(e.offsetY + dragRef.current.y, 0);
+
+    // get canvas width and height at the click moment
+    // @ts-ignore
+    const canvasWidthAtClickMoment = e.target.clientWidth as number;
+    // @ts-ignore
+    const canvasHeightAtClickMoment = e.target.clientHeight as number;
+
+    // get grid clicked
+    const xGrids = Math.floor(canvasWidthAtClickMoment / cellSize);
+    const yGrids = Math.floor(canvasHeightAtClickMoment / cellSize);
+
+    let xPosition = 0;
+    let yPosition = 0;
+
+    for (let index = 0; index < xGrids * cellSize; index += 20) {
+      if (x >= index && x < index + 20) {
+        break;
+      }
+      xPosition++;
+    }
+
+    for (let index = 0; index < yGrids * cellSize; index += 20) {
+      if (y >= index && y < index + 20) {
+        break;
+      }
+      yPosition++;
+    }
+
+    let matrixDeepCopy = JSON.parse(JSON.stringify(matrixRef.current));
+    matrixDeepCopy[yPosition][xPosition] = 1;
+    matrixRef.current = matrixDeepCopy;
+    setMatrix(matrixDeepCopy);
+  };
+
   const _onPointerDown = useCallback((e: MouseEvent) => {
     e.preventDefault();
     isMouseDown.current = true;
@@ -130,11 +172,15 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const _onPointerUp = useCallback((e: MouseEvent) => {
     e.preventDefault();
     isMouseDown.current = false;
+    _fillGridOnClick(e);
+    isDragging.current = false;
   }, []);
 
   const _onPointerMove = useCallback((e: MouseEvent) => {
     e.preventDefault();
     if (!isMouseDown.current) return;
+
+    isDragging.current = true;
 
     const x = e.movementX + dragRef.current.x;
     const y = e.movementY + dragRef.current.y;
@@ -142,7 +188,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     dragRef.current = { x, y };
 
     setDrag({ x, y });
-
   }, []);
 
   const _changeCanvasWidthAndHeightOnResize = useCallback(() => {
@@ -164,7 +209,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const _onWheelEvent = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const lastScale = scaleRef.current;
     let scaleRefCopy = scaleRef.current;
 
@@ -191,9 +236,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     else if (cellSizeCopy < MIN_CELL_SIZE) cellSizeCopy = MIN_CELL_SIZE;
 
     // getMousePosition
-    const x = e.clientX;
-    const y = e.clientY;
-    dragRef.current = { x, y };
+    // const x = e.clientX;
+    // const y = e.clientY;
+    // dragRef.current = { x, y };
 
     setCellSize(cellSizeCopy);
   }, []);
