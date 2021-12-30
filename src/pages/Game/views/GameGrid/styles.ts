@@ -1,8 +1,9 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  display: block;
-  height: 600px;
+  display: flex;
+  flex-grow: 9;
+  // height: 600px;
   overflow: hidden;
   margin: 10px;
   padding: 10px;

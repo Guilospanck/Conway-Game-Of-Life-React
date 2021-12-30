@@ -3,7 +3,6 @@ import { GameContext } from "../context/gameContext";
 
 export interface IUseGameGridViewModel {
   canvasRef: any,
-  onWheelEvent: (e: React.WheelEvent<HTMLCanvasElement>) => void
 }
 
 export const useGameGridViewModel = (): IUseGameGridViewModel => {
@@ -45,6 +44,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     canvasRef.current.addEventListener('mousedown', _onPointerDown);
     canvasRef.current.addEventListener('mouseup', _onPointerUp);
     canvasRef.current.addEventListener('mousemove', _onPointerMove);
+    canvasRef.current.addEventListener('mousewheel', _onWheelEvent, false);
 
     window.addEventListener('resize', _changeCanvasWidthAndHeightOnResize);
 
@@ -52,6 +52,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
       canvasRef.current.removeEventListener('mousedown', _onPointerDown);
       canvasRef.current.removeEventListener('mouseup', _onPointerUp);
       canvasRef.current.removeEventListener('mousemove', _onPointerMove);
+      canvasRef.current.removeEventListener('mousewheel', _onWheelEvent, false);
       window.removeEventListener('resize', _changeCanvasWidthAndHeightOnResize);
     }
   }, []);
@@ -160,7 +161,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     setCanvasHeight(newCanvasHeight);
   };
 
-  const onWheelEvent = (e: React.WheelEvent<HTMLCanvasElement>) => {
+  const _onWheelEvent = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     const lastScale = scaleRef.current;
     let scaleRefCopy = scaleRef.current;
 
@@ -186,12 +189,13 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     if (cellSizeCopy > MAX_CELL_SIZE) cellSizeCopy = MAX_CELL_SIZE;
     else if (cellSizeCopy < MIN_CELL_SIZE) cellSizeCopy = MIN_CELL_SIZE;
 
+
+
     setCellSize(cellSizeCopy);
-  };
+  }, []);
 
   return {
     canvasRef,
-    onWheelEvent
   };
 
 };
