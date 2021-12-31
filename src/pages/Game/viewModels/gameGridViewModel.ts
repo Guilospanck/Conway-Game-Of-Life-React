@@ -10,6 +10,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const {
     matrix, setMatrix,
     cellSize, setCellSize,
+    cellSizeRef,
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
     dragRef,
@@ -128,39 +129,20 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     if (isDragging.current) return;
 
     // get mouse click position relative to canvas
-    const x = e.offsetX;
-    const REMOVING_LINE_WIDTH = Math.ceil(e.offsetY - (Math.ceil(e.offsetY / cellSize) * LINE_WIDTH) - (Math.ceil(e.offsetY / cellSize) * (LINE_WIDTH / 4)));
-    const y = Math.max(REMOVING_LINE_WIDTH, 1);
+    const canvasRect = canvasRef.current.getBoundingClientRect();
+    const x = Math.floor((e.x - canvasRect.left) / cellSizeRef.current);
+    const y = Math.floor((e.y - canvasRect.top) / cellSizeRef.current);
 
-    // get canvas width and height at the click moment
-    // @ts-ignore
-    const canvasWidthAtClickMoment = e.target.width as number;
-    // @ts-ignore
-    const canvasHeightAtClickMoment = e.target.height as number;
-
-    // get grid clicked
-    const xGrids = Math.round(canvasWidthAtClickMoment / cellSize);
-    const yGrids = Math.round(canvasHeightAtClickMoment / cellSize);
-
-    let xPosition = 0;
-    let yPosition = 0;
-
-    for (let index = 0; index < xGrids * cellSize; index += cellSize) {
-      if (x > index && x <= index + cellSize) {
-        break;
-      }
-      xPosition++;
-    }
-
-    for (let index = 0; index < yGrids * cellSize; index += cellSize) {
-      if (y > index && y <= index + cellSize) {
-        break;
-      }
-      yPosition++;
-    }
+    console.log({
+      eventX: e.x,
+      eventY: e.y,
+      canvasRect,
+      x,
+      y
+    })
 
     let matrixDeepCopy = JSON.parse(JSON.stringify(matrixRef.current));
-    matrixDeepCopy[yPosition][xPosition] = 1;
+    matrixDeepCopy[y][x] = 1;
     matrixRef.current = matrixDeepCopy;
     setMatrix(matrixDeepCopy);
   };
@@ -180,14 +162,15 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const _onPointerMove = useCallback((e: MouseEvent) => {
     e.preventDefault();
     if (!isMouseDown.current) return;
-
-    isDragging.current = true;
-
+    
     const x = e.movementX + dragRef.current.x;
     const y = e.movementY + dragRef.current.y;
 
-    dragRef.current = { x, y };
+    isDragging.current = Math.abs(x) > 5 || Math.abs(y) > 5;
 
+    if(!isDragging.current) return;
+
+    dragRef.current = { x, y };
     setDrag({ x, y });
   }, []);
 
@@ -234,11 +217,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     if (cellSizeCopy > MAX_CELL_SIZE) cellSizeCopy = MAX_CELL_SIZE;
     else if (cellSizeCopy < MIN_CELL_SIZE) cellSizeCopy = MIN_CELL_SIZE;
 
-    // getMousePosition
-    // const x = e.clientX;
-    // const y = e.clientY;
-    // dragRef.current = { x, y };
-
+    cellSizeRef.current = cellSizeCopy;
     setCellSize(cellSizeCopy);
   }, []);
 
