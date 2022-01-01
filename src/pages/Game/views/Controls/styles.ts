@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  flex-grow: 2;
+  flex-grow: 1;
   align-items: center;
   justify-content: center;
   gap: 1%;
@@ -14,7 +14,7 @@ export const ButtonsContainer = styled.div`
   }
 `;
 
-export const StartGameBTN = styled.button`
+export const DefaultBTN = styled.button`
   outline: none;
   cursor: pointer;
   border-radius: 5px;
@@ -35,68 +35,13 @@ export const StartGameBTN = styled.button`
   }
 `;
 
-export const StopGameBTN = styled.button`
-  outline: none;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  padding: 10px;
-  text-transform: uppercase;
-  width: 120px;
-  font-weight: bold;
-  color: #027b2d;
+export const StartGameBTN = styled(DefaultBTN)``;
 
-  &:hover {
-    background-color: #78a889;
-    color: white;
-  }
+export const StopGameBTN = styled(DefaultBTN)``;
 
-  @media(max-width: 700px) {
-    margin-bottom: 1%;
-  }
-`;
+export const ResetGameBTN = styled(DefaultBTN)``;
 
-export const ResetGameBTN = styled.button`
-  outline: none;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  padding: 10px;
-  text-transform: uppercase;
-  width: 120px;
-  font-weight: bold;
-  color: #027b2d;
-
-  &:hover {
-    background-color: #78a889;
-    color: white;
-  }
-
-  @media(max-width: 700px) {
-    margin-bottom: 1%;
-  }
-`;
-
-export const CentralizeGameBTN = styled.button`
-  outline: none;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  padding: 10px;
-  text-transform: uppercase;
-  width: 120px;
-  font-weight: bold;
-  color: #027b2d;
-
-  &:hover {
-    background-color: #78a889;
-    color: white;
-  }
-
-  @media(max-width: 700px) {
-    margin-bottom: 1%;
-  }
-`;
+export const CentralizeGameBTN = styled(DefaultBTN)``;
 
 export const SliderContainer = styled.div`
   display: flex;
