@@ -24,7 +24,7 @@ export const GameContext = createContext<IGameContext | null>(null);
 
 export const GameContextProvider = ({ children }) => {
 
-  const CELL_SIZE = 20;
+  const CELL_SIZE = 40;
 
   const [matrix, setMatrix] = useState([]);
   const matrixRef = useRef([]);
@@ -47,13 +47,16 @@ export const GameContextProvider = ({ children }) => {
 
   const generateMatrix = (isReset = false) => {
     let matrixArray = [];
-    if(!isReset){
+    if (!isReset) {
       matrixArray = [...matrix];
     }
 
-    for (let i = 0; i < canvasWidth; i++) {
+    const height = Math.ceil(canvasWidth / cellSize);
+    const width = Math.ceil(canvasHeight / cellSize);
+
+    for (let i = 0; i < width; i++) {
       if (!matrixArray[i]) matrixArray[i] = [];
-      for (let j = 0; j < canvasHeight; j++) {
+      for (let j = 0; j < height; j++) {
         if (!matrixArray[i][j]) matrixArray[i][j] = 0;
       }
     }
@@ -73,7 +76,7 @@ export const GameContextProvider = ({ children }) => {
     dragRef,
     generateMatrix,
     scaleRef,
-    cellSizeRef
+    cellSizeRef,
   };
 
   return <GameContext.Provider value={defaultContext}> {children} </GameContext.Provider>

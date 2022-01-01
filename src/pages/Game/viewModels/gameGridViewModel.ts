@@ -16,7 +16,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     dragRef,
     generateMatrix,
     scaleRef,
-    matrixRef
+    matrixRef,
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -28,6 +28,10 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const isMouseDown = useRef(false);
   const isDragging = useRef(false);
   const [drag, setDrag] = useState({ x: 0, y: 0 });
+  
+  // Adding Matrix when panning
+  const lastMaximumX = useRef(0);
+  const lastMaximumY = useRef(0);
 
   // Zoom
   const MIN_ZOOM = -3;
@@ -61,6 +65,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   }, []);
 
   useEffect(() => {
+    increaseMatrix();
     _populateGrid();
   }, [matrix, drag, cellSize]);
 
@@ -72,7 +77,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   const _initialCanvasDrawing = () => {
     const canvas = canvasRef.current;
-    
+
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
@@ -89,29 +94,44 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     _clearGrid();
     _drawGrid();
 
-    const rows = matrix.length;
+    const rows = matrixRef.current.length;
+    contextRef.current.font = '06px Arial';
 
     for (let j = 0; j < rows; j++) {
-      for (let i = 0; i < matrix[j].length; i++) {        
-        if (matrix[j][i] === 1) {
-          contextRef.current.fillRect(
-            i * cellSize + 1 + dragRef.current.x,
-            j * cellSize + 1 + dragRef.current.y,
-            cellSize - 1,
-            cellSize - 1
-          );
-        }
+      for (let i = 0; i < matrixRef.current[j].length; i++) {
+
+        contextRef.current.fillText(
+          `${i}-${j}`,
+          i * cellSize + 1 + dragRef.current.x + 5,
+          j * cellSize + 1 + dragRef.current.y + 10
+        );
+
+        // contextRef.current.fillRect(
+        //   i * cellSizeRef.current + 1 + dragRef.current.x,
+        //   j * cellSizeRef.current + 1 + dragRef.current.y,
+        //   cellSizeRef.current - 1,
+        //   cellSizeRef.current - 1
+        // );
+
+        // if (matrix[j][i] === 1) {
+        //   contextRef.current.fillRect(
+        //     i * cellSize + 1 + dragRef.current.x,
+        //     j * cellSize + 1 + dragRef.current.y,
+        //     cellSize - 1,
+        //     cellSize - 1
+        //   );
+        // }
       }
     }
 
   };
 
-  const _drawGrid = () => {    
+  const _drawGrid = () => {
     for (let i = dragRef.current.x % cellSize; i < canvasWidth; i += cellSize) {
       contextRef.current.beginPath();
       contextRef.current.moveTo(i + LINE_WIDTH / 2, 0);
       contextRef.current.lineTo(i + LINE_WIDTH / 2, canvasHeight);
-      contextRef.current.stroke();      
+      contextRef.current.stroke();
     }
 
     for (let j = dragRef.current.y % cellSize; j < canvasHeight; j += cellSize) {
@@ -178,9 +198,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     const pixelHeight = canvasContainer.offsetHeight;
     const newCanvasWidth = pixelWidth - 2 * canvasContainerPadding;
     const newCanvasHeight = pixelHeight - 2 * canvasContainerPadding;
-    
+
     const canvas = { width: newCanvasWidth, height: newCanvasHeight };
-    
+
     setCanvasWidth(canvas.width);
     setCanvasHeight(canvas.height);
   };
@@ -215,6 +235,48 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     cellSizeRef.current = cellSizeCopy;
     setCellSize(cellSizeCopy);
   }, []);
+
+
+  const _updateMatrixValuesWhenOffsetIsPositive = (matrixCopy: number[][], xOffset: number, yOffset: number) => {
+    const rows = matrix.length;
+    for (let i = 0; i < rows; i++) {
+      const columns = matrix[i].length;
+      for (let j = 0; j < columns; j++) {
+        matrixCopy[i][j] = 0;
+        if (!matrixCopy[i + xOffset]) matrixCopy[i + xOffset] = [];
+        matrixCopy[i + xOffset][j + yOffset] = matrix[i][j];
+      }
+    }
+  };
+
+  const increaseMatrix = () => {
+    const matrixCopy = JSON.parse(JSON.stringify(matrix));
+
+    // Get cells offset
+    const xOffset = Math.floor(Math.abs(dragRef.current.x) / cellSizeRef.current);
+    const yOffset = Math.floor(Math.abs(dragRef.current.y) / cellSizeRef.current);
+
+    // matrix already filled
+    if (xOffset <= lastMaximumX.current && yOffset <= lastMaximumY.current) return;
+
+    // verifies if x and y offset are new maximum
+    const xOffsetIsNewMaximum = xOffset > lastMaximumX.current;
+    const yOffsetIsNewMaximum = yOffset > lastMaximumY.current;
+
+    // set new Maximum X and Y
+    if (xOffset > lastMaximumX.current) lastMaximumX.current = xOffset;
+    if (yOffset > lastMaximumY.current) lastMaximumY.current = yOffset;
+
+    // get Drag direction (up-left, up-right, down-left, down-right)
+    const isUpLeft = dragRef.current.x > 0 && dragRef.current.y > 0;
+
+    if (xOffsetIsNewMaximum && yOffsetIsNewMaximum && isUpLeft) {
+      _updateMatrixValuesWhenOffsetIsPositive(matrixCopy, xOffset, yOffset);
+    }
+
+    matrixRef.current = matrixCopy;
+    setMatrix(matrixCopy);
+  };
 
   return {
     canvasRef,
