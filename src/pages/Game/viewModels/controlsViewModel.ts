@@ -26,7 +26,8 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     canvasWidth,
     canvasHeight,
     generateMatrix,
-    dragRef
+    dragRef,
+    centralizeCanvas
   } = useContext(GameContext);
 
   const [gameStarted, setGameStarted] = useState(false);
@@ -71,7 +72,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
   const onClickCentralizeGameBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    dragRef.current = { x: 0, y: 0 };
+    centralizeCanvas();
     generateMatrix();
   };
 

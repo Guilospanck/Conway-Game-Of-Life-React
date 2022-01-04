@@ -17,6 +17,8 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     generateMatrix,
     scaleRef,
     matrixRef,
+    deepCopyMatrixWithNegativeIndexes,
+    centralizeCanvas
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -28,10 +30,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const isMouseDown = useRef(false);
   const isDragging = useRef(false);
   const [drag, setDrag] = useState({ x: 0, y: 0 });
-  
-  // Adding Matrix when panning
-  const lastMaximumX = useRef(0);
-  const lastMaximumY = useRef(0);
 
   // Zoom
   const MIN_ZOOM = -3;
@@ -46,7 +44,8 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   useEffect(() => {
     _initialCanvasDrawing();
-    _getNewCanvasSize();
+    const canvasSize = _getNewCanvasSize();
+    centralizeCanvas(canvasSize.width, canvasSize.height);
 
     canvasRef.current.addEventListener('mousedown', _onPointerDown);
     canvasRef.current.addEventListener('mouseup', _onPointerUp);
@@ -65,15 +64,14 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   }, []);
 
   useEffect(() => {
-    increaseMatrix();
     _populateGrid();
-  }, [matrix, drag, cellSize]);
+  }, [matrix, cellSize]);
 
   useEffect(() => {
     _initialCanvasDrawing();
     generateMatrix();
     _populateGrid();
-  }, [canvasHeight, canvasWidth]);
+  }, [canvasHeight, canvasWidth, drag]);
 
   const _initialCanvasDrawing = () => {
     const canvas = canvasRef.current;
@@ -88,17 +86,22 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
     contextRef.current = context;
     setContextState(context);
-  };
+  };  
 
   const _populateGrid = () => {
     _clearGrid();
     _drawGrid();
 
-    const rows = matrixRef.current.length;
+    const rows = matrixRef.current.length * 2;
     contextRef.current.font = '06px Arial';
 
-    for (let j = 0; j < rows; j++) {
-      for (let i = 0; i < matrixRef.current[j].length; i++) {
+    console.log(matrixRef.current.map((value, index) => index))
+
+    for (let j = -Math.floor(rows / 2); j < Math.ceil(rows / 2); j++) {
+      const columns = matrixRef.current[j]?.length * 2;
+      if (!columns) continue;
+
+      for (let i = -Math.floor(columns / 2); i < Math.ceil(columns / 2); i++) {
 
         contextRef.current.fillText(
           `${i}-${j}`,
@@ -113,7 +116,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
         //   cellSizeRef.current - 1
         // );
 
-        // if (matrix[j][i] === 1) {
+        // const element = matrixRef.current[j][i];
+
+        // if (element && element === 1) {
         //   contextRef.current.fillRect(
         //     i * cellSize + 1 + dragRef.current.x,
         //     j * cellSize + 1 + dragRef.current.y,
@@ -150,13 +155,20 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     if (isDragging.current) return;
 
     // get mouse click position relative to canvas
-    const x = Math.floor((e.offsetX) / cellSizeRef.current);
-    const y = Math.floor((e.offsetY) / cellSizeRef.current);
+    const x = Math.floor((e.offsetX + (dragRef.current.x * -1)) / cellSizeRef.current);
+    const y = Math.floor((e.offsetY + (dragRef.current.y * -1)) / cellSizeRef.current);
 
-    let matrixDeepCopy = JSON.parse(JSON.stringify(matrixRef.current));
-    matrixDeepCopy[y][x] = 1;
-    matrixRef.current = matrixDeepCopy;
-    setMatrix(matrixDeepCopy);
+    const matrixArray = deepCopyMatrixWithNegativeIndexes(matrixRef.current);
+
+    console.log({first: matrixArray})
+    
+    if (!matrixArray[y]) matrixArray[y] = [];
+    matrixArray[y][x] = 1;
+    matrixRef.current = matrixArray;
+    
+    console.log({second: matrixArray, y, x})
+
+    setMatrix(matrixArray);
   };
 
   const _onPointerDown = useCallback((e: MouseEvent) => {
@@ -203,6 +215,8 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
     setCanvasWidth(canvas.width);
     setCanvasHeight(canvas.height);
+
+    return canvas;
   };
 
   const _onWheelEvent = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
@@ -235,48 +249,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     cellSizeRef.current = cellSizeCopy;
     setCellSize(cellSizeCopy);
   }, []);
-
-
-  const _updateMatrixValuesWhenOffsetIsPositive = (matrixCopy: number[][], xOffset: number, yOffset: number) => {
-    const rows = matrix.length;
-    for (let i = 0; i < rows; i++) {
-      const columns = matrix[i].length;
-      for (let j = 0; j < columns; j++) {
-        matrixCopy[i][j] = 0;
-        if (!matrixCopy[i + xOffset]) matrixCopy[i + xOffset] = [];
-        matrixCopy[i + xOffset][j + yOffset] = matrix[i][j];
-      }
-    }
-  };
-
-  const increaseMatrix = () => {
-    const matrixCopy = JSON.parse(JSON.stringify(matrix));
-
-    // Get cells offset
-    const xOffset = Math.floor(Math.abs(dragRef.current.x) / cellSizeRef.current);
-    const yOffset = Math.floor(Math.abs(dragRef.current.y) / cellSizeRef.current);
-
-    // matrix already filled
-    if (xOffset <= lastMaximumX.current && yOffset <= lastMaximumY.current) return;
-
-    // verifies if x and y offset are new maximum
-    const xOffsetIsNewMaximum = xOffset > lastMaximumX.current;
-    const yOffsetIsNewMaximum = yOffset > lastMaximumY.current;
-
-    // set new Maximum X and Y
-    if (xOffset > lastMaximumX.current) lastMaximumX.current = xOffset;
-    if (yOffset > lastMaximumY.current) lastMaximumY.current = yOffset;
-
-    // get Drag direction (up-left, up-right, down-left, down-right)
-    const isUpLeft = dragRef.current.x > 0 && dragRef.current.y > 0;
-
-    if (xOffsetIsNewMaximum && yOffsetIsNewMaximum && isUpLeft) {
-      _updateMatrixValuesWhenOffsetIsPositive(matrixCopy, xOffset, yOffset);
-    }
-
-    matrixRef.current = matrixCopy;
-    setMatrix(matrixCopy);
-  };
 
   return {
     canvasRef,
