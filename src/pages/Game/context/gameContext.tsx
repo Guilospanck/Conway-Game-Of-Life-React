@@ -8,8 +8,6 @@ interface IGameContext {
   generationSpeed: number,
   setGenerationSpeed: (generationSpeed: number) => void,
   matrixRef: React.MutableRefObject<{}>,
-  cellSize: number,
-  setCellSize: (cellSize: number) => void,
   canvasWidth: number,
   setCanvasWidth: (canvasWidth: number) => void,
   canvasHeight: number,
@@ -22,14 +20,15 @@ interface IGameContext {
   MIN_ZOOM: number,
   MAX_ZOOM: number,
   MIN_CELL_SIZE: number,
-  MAX_CELL_SIZE: number
+  MAX_CELL_SIZE: number,
+  CELL_SIZE: number
 };
 
 export const GameContext = createContext<IGameContext | null>(null);
 
 export const GameContextProvider = ({ children }) => {
 
-  const CELL_SIZE = 20;
+  const CELL_SIZE = 80;
 
   const [matrix, setMatrix] = useState({});
   const matrixRef = useRef({});
@@ -38,7 +37,6 @@ export const GameContextProvider = ({ children }) => {
 
   const [generationSpeed, setGenerationSpeed] = useState(1);
 
-  const [cellSize, setCellSize] = useState(CELL_SIZE);
   const cellSizeRef = useRef(CELL_SIZE);
 
   const [canvasWidth, setCanvasWidth] = useState(0);
@@ -49,15 +47,15 @@ export const GameContextProvider = ({ children }) => {
 
   // Zoom
   const scaleRef = useRef(0);
-  const MIN_ZOOM = -3;
-  const MAX_ZOOM = 3;
+  const MIN_ZOOM = -6;
+  const MAX_ZOOM = 6;
   const MAX_CELL_SIZE = 160;
   const MIN_CELL_SIZE = 2.5;
-  
+
   const generateMatrix = (isReset = false) => {
     let matrixObj = {};
     if (!isReset) {
-      matrixObj = {...matrixRef.current};
+      matrixObj = { ...matrixRef.current };
     }
 
     const height = Math.ceil(canvasHeight / MIN_CELL_SIZE);
@@ -77,6 +75,7 @@ export const GameContextProvider = ({ children }) => {
   const centralizeCanvas = (width: number | undefined = null, height: number | undefined = null) => {
     const newCanvasWidth = width ?? canvasWidth;
     const newCanvasHeight = height ?? canvasHeight;
+
     dragRef.current.x = Math.floor(newCanvasWidth / 2);
     dragRef.current.y = Math.floor(newCanvasHeight / 2);
   };
@@ -86,7 +85,6 @@ export const GameContextProvider = ({ children }) => {
     ticksInterval, setTicksInterval,
     generationSpeed, setGenerationSpeed,
     matrixRef,
-    cellSize, setCellSize,
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
     dragRef,
@@ -94,7 +92,8 @@ export const GameContextProvider = ({ children }) => {
     scaleRef,
     cellSizeRef,
     centralizeCanvas,
-    MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE
+    MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE,
+    CELL_SIZE
   };
 
   return <GameContext.Provider value={defaultContext}> {children} </GameContext.Provider>

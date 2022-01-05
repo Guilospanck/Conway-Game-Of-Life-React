@@ -9,7 +9,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   const {
     matrix, setMatrix,
-    cellSize, setCellSize,
     cellSizeRef,
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
@@ -18,7 +17,8 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     matrixRef,
     centralizeCanvas,
     generateMatrix,
-    MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE
+    MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE,
+    CELL_SIZE
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -29,7 +29,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   // Pan
   const isMouseDown = useRef(false);
   const isDragging = useRef(false);
-  const [drag, setDrag] = useState({ x: 0, y: 0 });  
+  const [drag, setDrag] = useState({ x: 0, y: 0 });
+
+  const [cellSize, setCellSize] = useState(CELL_SIZE);
 
   // Canvas Configs
   const FILL_STYLE = "rgb(100, 240, 150)";
@@ -81,26 +83,37 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
     contextRef.current = context;
     setContextState(context);
-  };  
+  };
 
   const _populateGrid = () => {
     _clearGrid();
     _drawGrid();
-    
+
     contextRef.current.font = '06px Arial';
 
     Object.keys(matrixRef.current).forEach((j) => {
-      if(!Object.keys(j).length) return;
+      if (!Object.keys(j).length) return;
 
       Object.keys(matrixRef.current[j]).forEach((i) => {
+
+        contextRef.current.fillStyle = 'white';
+
+        contextRef.current.fillText(
+          `${i}${j}`,
+          parseInt(i) * cellSize + 1 + dragRef.current.x + 5,
+          parseInt(j) * cellSize + 1 + dragRef.current.y + 10
+        );
+
+        contextRef.current.fillStyle = 'red';
+
         const element = matrixRef.current[j][i];
 
         if (element && element === 1) {
           contextRef.current.fillRect(
-            parseInt(i) * cellSize + 1 + dragRef.current.x,
-            parseInt(j) * cellSize + 1 + dragRef.current.y,
-            cellSize - 1,
-            cellSize - 1
+            parseInt(i) * cellSizeRef.current + 1 + dragRef.current.x,
+            parseInt(j) * cellSizeRef.current + 1 + dragRef.current.y,
+            cellSizeRef.current - 1,
+            cellSizeRef.current - 1
           );
         }
 
@@ -110,14 +123,14 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   };
 
   const _drawGrid = () => {
-    for (let i = dragRef.current.x % cellSize; i < canvasWidth; i += cellSize) {
+    for (let i = dragRef.current.x % cellSizeRef.current; i < canvasWidth; i += cellSizeRef.current) {
       contextRef.current.beginPath();
       contextRef.current.moveTo(i + LINE_WIDTH / 2, 0);
       contextRef.current.lineTo(i + LINE_WIDTH / 2, canvasHeight);
       contextRef.current.stroke();
     }
 
-    for (let j = dragRef.current.y % cellSize; j < canvasHeight; j += cellSize) {
+    for (let j = dragRef.current.y % cellSizeRef.current; j < canvasHeight; j += cellSizeRef.current) {
       contextRef.current.beginPath();
       contextRef.current.moveTo(0, j + LINE_WIDTH / 2);
       contextRef.current.lineTo(canvasWidth, j + LINE_WIDTH / 2);
@@ -136,11 +149,11 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     const x = Math.floor((e.offsetX + (dragRef.current.x * -1)) / cellSizeRef.current);
     const y = Math.floor((e.offsetY + (dragRef.current.y * -1)) / cellSizeRef.current);
 
-    const matrixObj = {...matrixRef.current};
-    
+    const matrixObj = { ...matrixRef.current };
+
     if (!matrixObj[y]) matrixObj[y] = {};
     matrixObj[y][x] = 1;
-    matrixRef.current = matrixObj;    
+    matrixRef.current = matrixObj;
 
     setMatrix(matrixObj);
   };
@@ -198,7 +211,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     e.stopPropagation();
 
     const lastScale = scaleRef.current;
-    let scaleRefCopy = scaleRef.current;
+    let scaleRefCopy = JSON.parse(JSON.stringify(scaleRef.current));
 
     scaleRefCopy += e.deltaY * -0.01;
 
@@ -211,10 +224,13 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
     if (isZoomLimit) return;
 
-    let cellSizeCopy = cellSize;
+    let cellSizeCopy = JSON.parse(JSON.stringify(cellSizeRef.current));
 
-    if (isZoomingIn) cellSizeCopy *= 2;
-    else cellSizeCopy /= 2;
+    if (isZoomingIn) {
+      cellSizeCopy *= 2;
+    } else {
+      cellSizeCopy /= 2;
+    }
 
     // limit cellsize
     if (cellSizeCopy > MAX_CELL_SIZE) cellSizeCopy = MAX_CELL_SIZE;
