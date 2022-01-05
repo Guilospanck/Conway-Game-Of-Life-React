@@ -14,11 +14,11 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     canvasWidth, setCanvasWidth,
     canvasHeight, setCanvasHeight,
     dragRef,
-    generateMatrix,
     scaleRef,
     matrixRef,
-    deepCopyMatrixWithNegativeIndexes,
-    centralizeCanvas
+    centralizeCanvas,
+    generateMatrix,
+    MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -29,13 +29,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   // Pan
   const isMouseDown = useRef(false);
   const isDragging = useRef(false);
-  const [drag, setDrag] = useState({ x: 0, y: 0 });
-
-  // Zoom
-  const MIN_ZOOM = -3;
-  const MAX_ZOOM = 3;
-  const MAX_CELL_SIZE = 160;
-  const MIN_CELL_SIZE = 2.5;
+  const [drag, setDrag] = useState({ x: 0, y: 0 });  
 
   // Canvas Configs
   const FILL_STYLE = "rgb(100, 240, 150)";
@@ -46,6 +40,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     _initialCanvasDrawing();
     const canvasSize = _getNewCanvasSize();
     centralizeCanvas(canvasSize.width, canvasSize.height);
+    generateMatrix();
 
     canvasRef.current.addEventListener('mousedown', _onPointerDown);
     canvasRef.current.addEventListener('mouseup', _onPointerUp);
@@ -65,13 +60,13 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   useEffect(() => {
     _populateGrid();
-  }, [matrix, cellSize]);
+  }, [matrix, cellSize, drag]);
 
   useEffect(() => {
     _initialCanvasDrawing();
     generateMatrix();
     _populateGrid();
-  }, [canvasHeight, canvasWidth, drag]);
+  }, [canvasHeight, canvasWidth]);
 
   const _initialCanvasDrawing = () => {
     const canvas = canvasRef.current;
@@ -91,43 +86,26 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   const _populateGrid = () => {
     _clearGrid();
     _drawGrid();
-
-    const rows = matrixRef.current.length * 2;
+    
     contextRef.current.font = '06px Arial';
 
-    console.log(matrixRef.current.map((value, index) => index))
+    Object.keys(matrixRef.current).forEach((j) => {
+      if(!Object.keys(j).length) return;
 
-    for (let j = -Math.floor(rows / 2); j < Math.ceil(rows / 2); j++) {
-      const columns = matrixRef.current[j]?.length * 2;
-      if (!columns) continue;
+      Object.keys(matrixRef.current[j]).forEach((i) => {
+        const element = matrixRef.current[j][i];
 
-      for (let i = -Math.floor(columns / 2); i < Math.ceil(columns / 2); i++) {
+        if (element && element === 1) {
+          contextRef.current.fillRect(
+            parseInt(i) * cellSize + 1 + dragRef.current.x,
+            parseInt(j) * cellSize + 1 + dragRef.current.y,
+            cellSize - 1,
+            cellSize - 1
+          );
+        }
 
-        contextRef.current.fillText(
-          `${i}-${j}`,
-          i * cellSize + 1 + dragRef.current.x + 5,
-          j * cellSize + 1 + dragRef.current.y + 10
-        );
-
-        // contextRef.current.fillRect(
-        //   i * cellSizeRef.current + 1 + dragRef.current.x,
-        //   j * cellSizeRef.current + 1 + dragRef.current.y,
-        //   cellSizeRef.current - 1,
-        //   cellSizeRef.current - 1
-        // );
-
-        // const element = matrixRef.current[j][i];
-
-        // if (element && element === 1) {
-        //   contextRef.current.fillRect(
-        //     i * cellSize + 1 + dragRef.current.x,
-        //     j * cellSize + 1 + dragRef.current.y,
-        //     cellSize - 1,
-        //     cellSize - 1
-        //   );
-        // }
-      }
-    }
+      });
+    });
 
   };
 
@@ -158,17 +136,13 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     const x = Math.floor((e.offsetX + (dragRef.current.x * -1)) / cellSizeRef.current);
     const y = Math.floor((e.offsetY + (dragRef.current.y * -1)) / cellSizeRef.current);
 
-    const matrixArray = deepCopyMatrixWithNegativeIndexes(matrixRef.current);
-
-    console.log({first: matrixArray})
+    const matrixObj = {...matrixRef.current};
     
-    if (!matrixArray[y]) matrixArray[y] = [];
-    matrixArray[y][x] = 1;
-    matrixRef.current = matrixArray;
-    
-    console.log({second: matrixArray, y, x})
+    if (!matrixObj[y]) matrixObj[y] = {};
+    matrixObj[y][x] = 1;
+    matrixRef.current = matrixObj;    
 
-    setMatrix(matrixArray);
+    setMatrix(matrixObj);
   };
 
   const _onPointerDown = useCallback((e: MouseEvent) => {

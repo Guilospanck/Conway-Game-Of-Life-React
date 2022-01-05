@@ -23,10 +23,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     matrixRef,
     ticksInterval, setTicksInterval,
     generationSpeed, setGenerationSpeed,
-    canvasWidth,
-    canvasHeight,
     generateMatrix,
-    dragRef,
     centralizeCanvas
   } = useContext(GameContext);
 
@@ -64,7 +61,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     e.stopPropagation();
 
     onClickStopGameBtn(e);
-    dragRef.current = { x: 0, y: 0 };
+    centralizeCanvas();
     generateMatrix(true);
     setGameStarted(false);
   };
@@ -74,25 +71,29 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
     centralizeCanvas();
     generateMatrix();
-  };
+  };  
 
   const _verifyPopulationAndUpdateIt = () => {
-    let matrixDeepCopy = JSON.parse(JSON.stringify(matrixRef.current));
+    let matrixObj = JSON.parse(JSON.stringify(matrixRef.current));
 
-    matrixRef.current.forEach((row, rowIndex) => {
-      row.forEach((cell: number, columnIndex: number) => {
-        const numberOfLiveNeighbors = _verifyLiveNeighbours(rowIndex, columnIndex, matrixRef.current);
+    Object.keys(matrixRef.current).forEach((j) => {
+      if (!Object.keys(j).length) return;
 
-        if (cell === 1) _verifyLiveCell(rowIndex, columnIndex, matrixDeepCopy, numberOfLiveNeighbors);
-        else _verifyDeadCell(rowIndex, columnIndex, matrixDeepCopy, numberOfLiveNeighbors);
+      Object.keys(matrixRef.current[j]).forEach((i) => {
+        const cell = matrixRef.current[j][i];
+        const numberOfLiveNeighbors = _verifyLiveNeighbours(parseInt(j), parseInt(i), matrixRef.current);
+
+        if (cell === 1) _verifyLiveCell(parseInt(j), parseInt(i), matrixObj, numberOfLiveNeighbors);
+        else _verifyDeadCell(parseInt(j), parseInt(i), matrixObj, numberOfLiveNeighbors);
       });
+
     });
 
-    matrixRef.current = matrixDeepCopy;
-    setMatrix(matrixDeepCopy);
+    matrixRef.current = matrixObj;
+    setMatrix(matrixObj);
   };
 
-  const _verifyLiveCell = (row: number, column: number, matrixCopy: number[][], numberOfLiveNeighbors: number) => {
+  const _verifyLiveCell = (row: number, column: number, matrixCopy: {}, numberOfLiveNeighbors: number) => {
     /**
      * Any live cell with 2 or 3 LIVE neighbours survives. If not, dies.
      */
@@ -101,7 +102,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     }
   };
 
-  const _verifyDeadCell = (row: number, column: number, matrixCopy: number[][], numberOfLiveNeighbors: number) => {
+  const _verifyDeadCell = (row: number, column: number, matrixCopy: {}, numberOfLiveNeighbors: number) => {
     /**
      * Any dead cell with 3 LIVE neighbours becomes a live cell. Otherwise, stays dead.
      */
@@ -110,28 +111,19 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     }
   };
 
-  const _verifyLiveNeighbours = (row: number, column: number, originalMatrix: number[][]) => {
-    if (row >= 1 && row <= canvasWidth - 2 && column >= 1 && column <= canvasHeight - 2) {
+  const _verifyLiveNeighbours = (row: number, column: number, originalMatrix: {}) => {
+    let counter = 0;
+    for (let j = row - 1; j <= row + 1; j++) {
+      for (let i = column - 1; i <= column + 1; i++) {
+        if (j === row && i === column) continue;
+        if (!originalMatrix[j]) continue;
 
-      const leftNeighbor = originalMatrix[row][column - 1];
-      const rightNeighbor = originalMatrix[row][column + 1];
-
-      const topLeftNeighbor = originalMatrix[row - 1][column - 1];
-      const topCenterNeighbor = originalMatrix[row - 1][column];
-      const topRightNeighbor = originalMatrix[row - 1][column + 1];
-
-      const bottomLeftNeighbor = originalMatrix[row + 1][column - 1];
-      const bottomCenterNeighbor = originalMatrix[row + 1][column];
-      const bottomRightNeighbor = originalMatrix[row + 1][column + 1];
-
-      const neighbors = [leftNeighbor, rightNeighbor,
-        topLeftNeighbor, topCenterNeighbor, topRightNeighbor,
-        bottomLeftNeighbor, bottomCenterNeighbor, bottomRightNeighbor];
-
-      return neighbors.filter(item => item === 1).length;
+        const element = originalMatrix[j][i];
+        if (element && element === 1) counter++;
+      }
     }
 
-    return 0;
+    return counter;
   };
 
   const onSliderPositionCallback = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,9 +143,9 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
   };
 
   const onSelectChange = (seed: string) => {
-    if(seed === 'Select' || gameStarted) return;
+    if (seed === 'Select' || gameStarted) return;
 
-    const matrixCopy = [...matrix];
+    const matrixCopy = { ...matrix };
 
     if (seed !== "Random") {
       Seeds[seed](matrixCopy);
