@@ -18,7 +18,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     centralizeCanvas,
     generateMatrix,
     MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE,
-    CELL_SIZE
+    CELL_SIZE,
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
@@ -40,7 +40,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   useEffect(() => {
     _initialCanvasDrawing();
-    const canvasSize = _getNewCanvasSize();
+    const canvasSize = _getNewCanvasSize();    
+    setCanvasWidth(canvasSize.width);
+    setCanvasHeight(canvasSize.height);
     centralizeCanvas(canvasSize.width, canvasSize.height);
     generateMatrix();
 
@@ -96,15 +98,15 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
       Object.keys(matrixRef.current[j]).forEach((i) => {
 
-        contextRef.current.fillStyle = 'white';
+        // contextRef.current.fillStyle = 'white';
 
-        contextRef.current.fillText(
-          `${i}${j}`,
-          parseInt(i) * cellSize + 1 + dragRef.current.x + 5,
-          parseInt(j) * cellSize + 1 + dragRef.current.y + 10
-        );
+        // contextRef.current.fillText(
+        //   `${i}${j}`,
+        //   parseInt(i) * cellSize + 1 + dragRef.current.x + 5,
+        //   parseInt(j) * cellSize + 1 + dragRef.current.y + 10
+        // );
 
-        contextRef.current.fillStyle = 'red';
+        // contextRef.current.fillStyle = 'red';
 
         const element = matrixRef.current[j][i];
 
@@ -186,7 +188,9 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
   }, []);
 
   const _changeCanvasWidthAndHeightOnResize = useCallback(() => {
-    _getNewCanvasSize();
+    const canvasSize = _getNewCanvasSize();
+    setCanvasWidth(canvasSize.width);
+    setCanvasHeight(canvasSize.height);
   }, []);
 
   const _getNewCanvasSize = () => {
@@ -198,10 +202,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     const newCanvasWidth = pixelWidth - 2 * canvasContainerPadding;
     const newCanvasHeight = pixelHeight - 2 * canvasContainerPadding;
 
-    const canvas = { width: newCanvasWidth, height: newCanvasHeight };
-
-    setCanvasWidth(canvas.width);
-    setCanvasHeight(canvas.height);
+    const canvas = { width: newCanvasWidth, height: newCanvasHeight };    
 
     return canvas;
   };

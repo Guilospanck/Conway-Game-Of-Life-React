@@ -21,7 +21,7 @@ interface IGameContext {
   MAX_ZOOM: number,
   MIN_CELL_SIZE: number,
   MAX_CELL_SIZE: number,
-  CELL_SIZE: number
+  CELL_SIZE: number,
 };
 
 export const GameContext = createContext<IGameContext | null>(null);
@@ -93,7 +93,7 @@ export const GameContextProvider = ({ children }) => {
     cellSizeRef,
     centralizeCanvas,
     MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE,
-    CELL_SIZE
+    CELL_SIZE,
   };
 
   return <GameContext.Provider value={defaultContext}> {children} </GameContext.Provider>

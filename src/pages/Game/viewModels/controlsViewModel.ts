@@ -122,7 +122,6 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
         if (element && element === 1) counter++;
       }
     }
-
     return counter;
   };
 
