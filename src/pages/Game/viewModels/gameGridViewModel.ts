@@ -95,7 +95,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
       if (!Object.keys(j).length) return;
 
       Object.keys(matrixRef.current[j]).forEach((i) => {
-
         const element = matrixRef.current[j][i];
 
         if (element && element === 1) {
@@ -106,7 +105,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
             cellSizeRef.current - 1
           );
         }
-
       });
     });
 
@@ -226,6 +224,14 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     else if (isCellSizeLowerThanMinLimit) cellSizeCopy = MIN_CELL_SIZE;
 
     if (cellSizeCopy === cellSizeRef.current) return;
+
+    const canvasSize = _getNewCanvasSize();
+    const offset = {
+      x: Math.round((dragRef.current.x + canvasSize.width / 2) / cellSizeCopy),
+      y: Math.round((dragRef.current.y + canvasSize.height / 2) / cellSizeCopy)
+    };
+
+    generateMatrix(false, offset);
 
     cellSizeRef.current = cellSizeCopy;
     setCellSize(cellSizeCopy);

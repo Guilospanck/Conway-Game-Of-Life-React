@@ -13,7 +13,7 @@ interface IGameContext {
   canvasHeight: number,
   setCanvasHeight: (canvasHeight: number) => void,
   dragRef: React.MutableRefObject<{ x: number; y: number; }>,
-  generateMatrix: (isReset?: boolean) => void
+  generateMatrix: (isReset?: boolean, offset?: { x: number, y: number }) => void
   scaleRef: React.MutableRefObject<number>,
   cellSizeRef: React.MutableRefObject<number>,
   centralizeCanvas: (width?: number, height?: number) => void,
@@ -55,7 +55,7 @@ export const GameContextProvider = ({ children }) => {
   const MAX_CELL_SIZE = 160;
   const MIN_CELL_SIZE = 2.5;
 
-  const generateMatrix = (isReset = false) => {
+  const generateMatrix = (isReset = false, offset = { x: 0, y: 0 }) => {
     let matrixObj = {};
     if (!isReset) {
       matrixObj = { ...matrixRef.current };
@@ -64,10 +64,26 @@ export const GameContextProvider = ({ children }) => {
     const height = Math.ceil(canvasHeight / MIN_CELL_SIZE);
     const width = Math.ceil(canvasWidth / MIN_CELL_SIZE);
 
-    for (let j = -Math.floor(height / 2); j < Math.ceil(height / 2); j++) {
-      if (!matrixObj[j]) matrixObj[j] = {};
-      for (let i = -Math.floor(width / 2); i < Math.ceil(width / 2); i++) {
-        if (!matrixObj[j][i]) matrixObj[j][i] = 0;
+    if (offset.x === 0 && offset.y === 0) {
+      for (let j = -Math.floor(height / 2); j < Math.ceil(height / 2); j++) {
+        if (!matrixObj[j]) matrixObj[j] = {};
+        for (let i = -Math.floor(width / 2); i < Math.ceil(width / 2); i++) {
+          if (Math.abs(j) === Math.abs(i) || j === 0 || i === 0) {
+            matrixObj[j][i] = 1;
+            continue;
+          }
+          if (!matrixObj[j][i]) matrixObj[j][i] = 0;
+        }
+      }
+    } else {
+      for (let j = -Math.floor(height / 2); j < Math.ceil(height / 2); j++) {
+        const yOffset = Math.round(j + offset.y);
+        if (!matrixObj[yOffset]) matrixObj[yOffset] = {};
+
+        for (let i = -Math.floor(width / 2); i < Math.ceil(width / 2); i++) {
+          const xOffset = Math.round(i + offset.x);
+          matrixObj[yOffset][xOffset] = matrixRef.current[j][i];
+        }
       }
     }
 
