@@ -22,13 +22,16 @@ interface IGameContext {
   MIN_CELL_SIZE: number,
   MAX_CELL_SIZE: number,
   CELL_SIZE: number,
+  contextRef: React.MutableRefObject<any>,
 };
 
 export const GameContext = createContext<IGameContext | null>(null);
 
 export const GameContextProvider = ({ children }) => {
 
-  const CELL_SIZE = 80;
+  const contextRef = useRef(null);
+
+  const CELL_SIZE = 20;
 
   const [matrix, setMatrix] = useState({});
   const matrixRef = useRef({});
@@ -58,8 +61,8 @@ export const GameContextProvider = ({ children }) => {
       matrixObj = { ...matrixRef.current };
     }
 
-    const height = Math.ceil(canvasHeight / MIN_CELL_SIZE);
-    const width = Math.ceil(canvasWidth / MIN_CELL_SIZE);
+    const height = Math.ceil(canvasHeight / 80);
+    const width = Math.ceil(canvasWidth / 80);
 
     for (let j = -Math.floor(height / 2); j < Math.ceil(height / 2); j++) {
       if (!matrixObj[j]) matrixObj[j] = {};
@@ -76,8 +79,13 @@ export const GameContextProvider = ({ children }) => {
     const newCanvasWidth = width ?? canvasWidth;
     const newCanvasHeight = height ?? canvasHeight;
 
-    dragRef.current.x = Math.floor(newCanvasWidth / 2);
-    dragRef.current.y = Math.floor(newCanvasHeight / 2);
+    const amountToTranslateOrDrag = {
+      x: Math.floor(newCanvasWidth / 2),
+      y: Math.floor(newCanvasHeight / 2)
+    };
+
+    // dragRef.current.x = amountToTranslateOrDrag.x;
+    // dragRef.current.y = amountToTranslateOrDrag.y;
   };
 
   const defaultContext: IGameContext = {
@@ -94,6 +102,7 @@ export const GameContextProvider = ({ children }) => {
     centralizeCanvas,
     MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE,
     CELL_SIZE,
+    contextRef,
   };
 
   return <GameContext.Provider value={defaultContext}> {children} </GameContext.Provider>

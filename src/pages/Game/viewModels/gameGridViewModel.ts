@@ -19,10 +19,10 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     generateMatrix,
     MIN_ZOOM, MAX_ZOOM, MIN_CELL_SIZE, MAX_CELL_SIZE,
     CELL_SIZE,
+    contextRef,
   } = useContext(GameContext);
 
   const canvasRef = useRef(null);
-  const contextRef = useRef(null);
 
   const [_, setContextState] = useState(null);
 
@@ -40,7 +40,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
   useEffect(() => {
     _initialCanvasDrawing();
-    const canvasSize = _getNewCanvasSize();    
+    const canvasSize = _getNewCanvasSize();
     setCanvasWidth(canvasSize.width);
     setCanvasHeight(canvasSize.height);
     centralizeCanvas(canvasSize.width, canvasSize.height);
@@ -78,7 +78,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext("2d", { alpha: false });
     context.fillStyle = FILL_STYLE;
     context.strokeStyle = STROKE_STYLE;
     context.lineWidth = LINE_WIDTH;
@@ -98,22 +98,18 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
       Object.keys(matrixRef.current[j]).forEach((i) => {
 
-        // contextRef.current.fillStyle = 'white';
-
-        // contextRef.current.fillText(
-        //   `${i}${j}`,
-        //   parseInt(i) * cellSize + 1 + dragRef.current.x + 5,
-        //   parseInt(j) * cellSize + 1 + dragRef.current.y + 10
-        // );
-
-        // contextRef.current.fillStyle = 'red';
+        contextRef.current.fillText(
+          `${i}${j}`,
+          parseInt(i) * cellSize + LINE_WIDTH + dragRef.current.x + 5,
+          parseInt(j) * cellSize + LINE_WIDTH + dragRef.current.y + 10
+        );
 
         const element = matrixRef.current[j][i];
 
         if (element && element === 1) {
           contextRef.current.fillRect(
-            parseInt(i) * cellSizeRef.current + 1 + dragRef.current.x,
-            parseInt(j) * cellSizeRef.current + 1 + dragRef.current.y,
+            parseInt(i) * cellSizeRef.current + LINE_WIDTH + dragRef.current.x,
+            parseInt(j) * cellSizeRef.current + LINE_WIDTH + dragRef.current.y,
             cellSizeRef.current - 1,
             cellSizeRef.current - 1
           );
@@ -154,7 +150,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     const matrixObj = { ...matrixRef.current };
 
     if (!matrixObj[y]) matrixObj[y] = {};
-    matrixObj[y][x] = 1;
+    matrixObj[y][x] === 1 ? matrixObj[y][x] = 0 : matrixObj[y][x] = 1;
     matrixRef.current = matrixObj;
 
     setMatrix(matrixObj);
@@ -202,7 +198,7 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     const newCanvasWidth = pixelWidth - 2 * canvasContainerPadding;
     const newCanvasHeight = pixelHeight - 2 * canvasContainerPadding;
 
-    const canvas = { width: newCanvasWidth, height: newCanvasHeight };    
+    const canvas = { width: newCanvasWidth, height: newCanvasHeight };
 
     return canvas;
   };
@@ -227,15 +223,17 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
     let cellSizeCopy = JSON.parse(JSON.stringify(cellSizeRef.current));
 
-    if (isZoomingIn) {
-      cellSizeCopy *= 2;
-    } else {
-      cellSizeCopy /= 2;
-    }
+    if (isZoomingIn) cellSizeCopy *= 2;
+    else cellSizeCopy /= 2;
 
     // limit cellsize
-    if (cellSizeCopy > MAX_CELL_SIZE) cellSizeCopy = MAX_CELL_SIZE;
-    else if (cellSizeCopy < MIN_CELL_SIZE) cellSizeCopy = MIN_CELL_SIZE;
+    const isCellSizeGreaterThanMaxLimit = cellSizeCopy > MAX_CELL_SIZE;
+    const isCellSizeLowerThanMinLimit = cellSizeCopy < MIN_CELL_SIZE;
+
+    if (isCellSizeGreaterThanMaxLimit) cellSizeCopy = MAX_CELL_SIZE;
+    else if (isCellSizeLowerThanMinLimit) cellSizeCopy = MIN_CELL_SIZE;
+
+    if (cellSizeCopy === cellSizeRef.current) return;
 
     cellSizeRef.current = cellSizeCopy;
     setCellSize(cellSizeCopy);
