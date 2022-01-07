@@ -91,18 +91,10 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
     _clearGrid();
     _drawGrid();
 
-    contextRef.current.font = '06px Arial';
-
     Object.keys(matrixRef.current).forEach((j) => {
       if (!Object.keys(j).length) return;
 
       Object.keys(matrixRef.current[j]).forEach((i) => {
-
-        contextRef.current.fillText(
-          `${i}${j}`,
-          parseInt(i) * cellSize + LINE_WIDTH + dragRef.current.x + 5,
-          parseInt(j) * cellSize + LINE_WIDTH + dragRef.current.y + 10
-        );
 
         const element = matrixRef.current[j][i];
 
