@@ -225,14 +225,6 @@ export const useGameGridViewModel = (): IUseGameGridViewModel => {
 
     if (cellSizeCopy === cellSizeRef.current) return;
 
-    const canvasSize = _getNewCanvasSize();
-    const offset = {
-      x: Math.round((dragRef.current.x + canvasSize.width / 2) / cellSizeCopy),
-      y: Math.round((dragRef.current.y + canvasSize.height / 2) / cellSizeCopy)
-    };
-
-    generateMatrix(false, offset);
-
     cellSizeRef.current = cellSizeCopy;
     setCellSize(cellSizeCopy);
   }, []);

@@ -24,7 +24,8 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
     ticksInterval, setTicksInterval,
     generationSpeed, setGenerationSpeed,
     generateMatrix,
-    centralizeCanvas
+    centralizeCanvas,
+    canvasWidth, canvasHeight, MIN_CELL_SIZE
   } = useContext(GameContext);
 
   const [gameStarted, setGameStarted] = useState(false);
@@ -71,7 +72,7 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
     centralizeCanvas();
     generateMatrix();
-  };  
+  };
 
   const _verifyPopulationAndUpdateIt = () => {
     let matrixObj = JSON.parse(JSON.stringify(matrixRef.current));
@@ -146,8 +147,15 @@ export const useControlsViewModel = (): IUseControlsViewModel => {
 
     const matrixCopy = { ...matrix };
 
+
     if (seed !== "Random") {
-      Seeds[seed](matrixCopy);
+      if (seed === "GiantCross") {
+        const height = Math.ceil(canvasHeight / MIN_CELL_SIZE);
+        const width = Math.ceil(canvasWidth / MIN_CELL_SIZE);
+        Seeds[seed](matrixCopy, width, height);
+      } else {
+        Seeds[seed](matrixCopy);
+      }
     } else {
       const randomPosition = Math.floor(Math.random() * SeedsNameArray.length);
       const seedName = SeedsNameArray[randomPosition];

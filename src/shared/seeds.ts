@@ -7,6 +7,19 @@ const _constructMatrix = (row: number, column: number, matrix: {}) => {
   matrix[row][column] = 1;
 };
 
+const GiantCross = (matrixCopy: {}, height: number, width: number) => {
+  for (let j = -Math.floor(height / 2); j < Math.ceil(height / 2); j++) {
+    if (!matrixCopy[j]) matrixCopy[j] = {};
+    for (let i = -Math.floor(width / 2); i < Math.ceil(width / 2); i++) {
+      if (Math.abs(j) === Math.abs(i) || j === 0 || i === 0) {
+        matrixCopy[j][i] = 1;
+        continue;
+      }
+      if (!matrixCopy[j][i]) matrixCopy[j][i] = 0;
+    }
+  }
+};
+
 const Beehive = (matrixCopy: {}) => {
   _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
   _constructMatrix(CENTER_X, CENTER_Y + 1, matrixCopy);
@@ -159,6 +172,7 @@ const GosperGliderGun = (matrixCopy: {}) => {
 };
 
 export const SeedsNameArray = [
+  "GiantCross",
   "Beehive",
   "BlinkerOscillator",
   "Beacon",
@@ -172,6 +186,7 @@ export const SeedsNameArray = [
 ];
 
 export const SeedsNameToShowInTheScreen = {
+  "GiantCross": "Giant Cross",
   "Beehive": "Beehive",
   "BlinkerOscillator": "Blinker Oscillator",
   "Beacon": "Beacon",
@@ -185,6 +200,7 @@ export const SeedsNameToShowInTheScreen = {
 };
 
 export const Seeds = {
+  "GiantCross": (matrixCopy: {}, width: number, height: number) => GiantCross(matrixCopy, height, width),
   "Beehive": (matrixCopy: {}) => Beehive(matrixCopy),
   "BlinkerOscillator": (matrixCopy: {}) => BlinkerOscillator(matrixCopy),
   "Beacon": (matrixCopy: {}) => Beacon(matrixCopy),
