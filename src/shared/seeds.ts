@@ -1,155 +1,178 @@
-const Beehive = (matrixCopy: Number[][]) => {
-  matrixCopy[20][20] = 1;
-  matrixCopy[20][21] = 1;
-  matrixCopy[21][19] = 1;
-  matrixCopy[21][22] = 1;
-  matrixCopy[22][20] = 1;
-  matrixCopy[22][21] = 1;
+const CENTER_X = 0;
+const CENTER_Y = 0;
+
+const _constructMatrix = (row: number, column: number, matrix: {}) => {
+  if (!matrix[row]) matrix[row] = {};
+
+  matrix[row][column] = 1;
 };
 
-const BlinkerOscillator = (matrixCopy: Number[][]) => {
-  matrixCopy[20][20] = 1;
-  matrixCopy[20][21] = 1;
-  matrixCopy[20][22] = 1;
+const GiantCross = (matrixCopy: {}, height: number, width: number) => {
+  for (let j = -Math.floor(height / 2); j < Math.ceil(height / 2); j++) {
+    if (!matrixCopy[j]) matrixCopy[j] = {};
+    for (let i = -Math.floor(width / 2); i < Math.ceil(width / 2); i++) {
+      if (Math.abs(j) === Math.abs(i) || j === 0 || i === 0) {
+        matrixCopy[j][i] = 1;
+        continue;
+      }
+      if (!matrixCopy[j][i]) matrixCopy[j][i] = 0;
+    }
+  }
 };
 
-const Beacon = (matrixCopy: Number[][]) => {
-  matrixCopy[20][20] = 1;
-  matrixCopy[20][21] = 1;
-  matrixCopy[21][20] = 1;
-  matrixCopy[22][23] = 1;
-  matrixCopy[23][22] = 1;
-  matrixCopy[23][23] = 1;
+const Beehive = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y + 1, matrixCopy);
 };
 
-const Glider = (matrixCopy: Number[][]) => {
-  matrixCopy[20][20] = 1;
-  matrixCopy[21][21] = 1;
-  matrixCopy[22][19] = 1;
-  matrixCopy[22][20] = 1;
-  matrixCopy[22][21] = 1;
+const BlinkerOscillator = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 2, matrixCopy);
 };
 
-const SmallExploder = (matrixCopy: Number[][]) => {
-  matrixCopy[20][20] = 1;
-  matrixCopy[21][19] = 1;
-  matrixCopy[21][20] = 1;
-  matrixCopy[21][21] = 1;
-  matrixCopy[22][19] = 1;
-  matrixCopy[22][21] = 1;
-  matrixCopy[23][20] = 1;
+const Beacon = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y + 3, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y + 3, matrixCopy);
 };
 
-const Exploder = (matrixCopy: Number[][]) => {
-  matrixCopy[20][18] = 1;
-  matrixCopy[20][20] = 1;
-  matrixCopy[20][22] = 1;
-  matrixCopy[21][18] = 1;
-  matrixCopy[21][22] = 1;
-  matrixCopy[22][18] = 1;
-  matrixCopy[22][22] = 1;
-  matrixCopy[23][18] = 1;
-  matrixCopy[23][22] = 1;
-  matrixCopy[24][18] = 1;
-  matrixCopy[24][20] = 1;
-  matrixCopy[24][22] = 1;
+const Glider = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y + 1, matrixCopy);
 };
 
-const TenCellRow = (matrixCopy: Number[][]) => {
-  matrixCopy[20][15] = 1;
-  matrixCopy[20][16] = 1;
-  matrixCopy[20][17] = 1;
-  matrixCopy[20][18] = 1;
-  matrixCopy[20][19] = 1;
-  matrixCopy[20][20] = 1;
-  matrixCopy[20][21] = 1;
-  matrixCopy[20][22] = 1;
-  matrixCopy[20][23] = 1;
-  matrixCopy[20][24] = 1;
+const SmallExploder = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y, matrixCopy);
 };
 
-const LightweightSpaceship = (matrixCopy: Number[][]) => {
-  matrixCopy[20][15] = 1;
-  matrixCopy[20][16] = 1;
-  matrixCopy[20][17] = 1;
-  matrixCopy[20][18] = 1;
-  matrixCopy[21][14] = 1;
-  matrixCopy[21][18] = 1;
-  matrixCopy[22][18] = 1;
-  matrixCopy[23][15] = 1;
-  matrixCopy[23][17] = 1;
+const Exploder = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 4, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 4, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 4, CENTER_Y + 2, matrixCopy);
 };
 
-const Tumbler = (matrixCopy: Number[][]) => {
-  matrixCopy[20][18] = 1;
-  matrixCopy[20][19] = 1;
-  matrixCopy[20][21] = 1;
-  matrixCopy[20][22] = 1;
-  matrixCopy[21][18] = 1;
-  matrixCopy[21][19] = 1;
-  matrixCopy[21][21] = 1;
-  matrixCopy[21][22] = 1;
-  matrixCopy[22][19] = 1;
-  matrixCopy[22][21] = 1;
-  matrixCopy[23][17] = 1;
-  matrixCopy[23][19] = 1;
-  matrixCopy[23][21] = 1;
-  matrixCopy[23][23] = 1;
-  matrixCopy[24][17] = 1;
-  matrixCopy[24][19] = 1;
-  matrixCopy[24][21] = 1;
-  matrixCopy[24][23] = 1;
-  matrixCopy[25][17] = 1;
-  matrixCopy[25][18] = 1;
-  matrixCopy[25][22] = 1;
-  matrixCopy[25][23] = 1;
+const TenCellRow = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y - 5, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 4, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 3, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 3, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 4, matrixCopy);
 };
 
-const GosperGliderGun = (matrixCopy: Number[][]) => {
-  matrixCopy[20][10] = 1;
-  matrixCopy[20][11] = 1;
-  matrixCopy[21][10] = 1;
-  matrixCopy[21][11] = 1;
+const LightweightSpaceship = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y - 5, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 4, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 3, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 6, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y - 5, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y - 3, matrixCopy);
+};
 
-  matrixCopy[20][19] = 1;
-  matrixCopy[20][20] = 1;
-  matrixCopy[21][18] = 1;
-  matrixCopy[21][20] = 1;
-  matrixCopy[22][18] = 1;
-  matrixCopy[22][19] = 1;
+const Tumbler = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y - 3, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y + 3, matrixCopy);
+  _constructMatrix(CENTER_X + 4, CENTER_Y - 3, matrixCopy);
+  _constructMatrix(CENTER_X + 4, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X + 4, CENTER_Y + 1, matrixCopy);
+  _constructMatrix(CENTER_X + 4, CENTER_Y + 3, matrixCopy);
+  _constructMatrix(CENTER_X + 5, CENTER_Y - 3, matrixCopy);
+  _constructMatrix(CENTER_X + 5, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 5, CENTER_Y + 2, matrixCopy);
+  _constructMatrix(CENTER_X + 5, CENTER_Y + 3, matrixCopy);
+};
 
-  matrixCopy[22][26] = 1;
-  matrixCopy[22][27] = 1;
-  matrixCopy[23][26] = 1;
-  matrixCopy[23][28] = 1;
-  matrixCopy[24][26] = 1;
+const GosperGliderGun = (matrixCopy: {}) => {
+  _constructMatrix(CENTER_X, CENTER_Y - 10, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y - 9, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 10, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 9, matrixCopy);
 
-  matrixCopy[20][32] = 1;
-  matrixCopy[20][33] = 1;
-  matrixCopy[19][32] = 1;
-  matrixCopy[19][34] = 1;
-  matrixCopy[18][33] = 1;
-  matrixCopy[18][34] = 1;
+  _constructMatrix(CENTER_X, CENTER_Y - 1, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 1, CENTER_Y, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y - 2, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y - 1, matrixCopy);
 
-  matrixCopy[30][34] = 1;
-  matrixCopy[30][35] = 1;
-  matrixCopy[30][36] = 1;
-  matrixCopy[31][34] = 1;
-  matrixCopy[32][35] = 1;
+  _constructMatrix(CENTER_X + 2, CENTER_Y + 6, matrixCopy);
+  _constructMatrix(CENTER_X + 2, CENTER_Y + 7, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y + 6, matrixCopy);
+  _constructMatrix(CENTER_X + 3, CENTER_Y + 8, matrixCopy);
+  _constructMatrix(CENTER_X + 4, CENTER_Y + 6, matrixCopy);
 
-  matrixCopy[19][44] = 1;
-  matrixCopy[19][45] = 1;
-  matrixCopy[18][44] = 1;
-  matrixCopy[18][45] = 1;
+  _constructMatrix(CENTER_X, CENTER_Y + 12, matrixCopy);
+  _constructMatrix(CENTER_X, CENTER_Y + 13, matrixCopy);
+  _constructMatrix(CENTER_X - 1, CENTER_Y + 12, matrixCopy);
+  _constructMatrix(CENTER_X - 1, CENTER_Y + 14, matrixCopy);
+  _constructMatrix(CENTER_X - 2, CENTER_Y + 13, matrixCopy);
+  _constructMatrix(CENTER_X - 2, CENTER_Y + 14, matrixCopy);
 
-  matrixCopy[25][45] = 1;
-  matrixCopy[25][46] = 1;
-  matrixCopy[26][45] = 1;
-  matrixCopy[26][47] = 1;
-  matrixCopy[27][45] = 1;
+  _constructMatrix(CENTER_X + 10, CENTER_Y + 14, matrixCopy);
+  _constructMatrix(CENTER_X + 10, CENTER_Y + 15, matrixCopy);
+  _constructMatrix(CENTER_X + 10, CENTER_Y + 16, matrixCopy);
+  _constructMatrix(CENTER_X + 11, CENTER_Y + 14, matrixCopy);
+  _constructMatrix(CENTER_X + 12, CENTER_Y + 15, matrixCopy);
+
+  _constructMatrix(CENTER_X - 1, CENTER_Y + 24, matrixCopy);
+  _constructMatrix(CENTER_X - 1, CENTER_Y + 25, matrixCopy);
+  _constructMatrix(CENTER_X - 2, CENTER_Y + 24, matrixCopy);
+  _constructMatrix(CENTER_X - 2, CENTER_Y + 25, matrixCopy);
+
+  _constructMatrix(CENTER_X + 5, CENTER_Y + 25, matrixCopy);
+  _constructMatrix(CENTER_X + 5, CENTER_Y + 26, matrixCopy);
+  _constructMatrix(CENTER_X + 6, CENTER_Y + 25, matrixCopy);
+  _constructMatrix(CENTER_X + 6, CENTER_Y + 27, matrixCopy);
+  _constructMatrix(CENTER_X + 7, CENTER_Y + 25, matrixCopy);
 };
 
 export const SeedsNameArray = [
+  "GiantCross",
   "Beehive",
   "BlinkerOscillator",
   "Beacon",
@@ -163,6 +186,7 @@ export const SeedsNameArray = [
 ];
 
 export const SeedsNameToShowInTheScreen = {
+  "GiantCross": "Giant Cross",
   "Beehive": "Beehive",
   "BlinkerOscillator": "Blinker Oscillator",
   "Beacon": "Beacon",
@@ -176,14 +200,15 @@ export const SeedsNameToShowInTheScreen = {
 };
 
 export const Seeds = {
-  "Beehive": (matrixCopy: Number[][]) => Beehive(matrixCopy),
-  "BlinkerOscillator": (matrixCopy: Number[][]) => BlinkerOscillator(matrixCopy),
-  "Beacon": (matrixCopy: Number[][]) => Beacon(matrixCopy),
-  "Glider": (matrixCopy: Number[][]) => Glider(matrixCopy),
-  "SmallExploder": (matrixCopy: Number[][]) => SmallExploder(matrixCopy),
-  "Exploder": (matrixCopy: Number[][]) => Exploder(matrixCopy),
-  "TenCellRow": (matrixCopy: Number[][]) => TenCellRow(matrixCopy),
-  "LightweightSpaceship": (matrixCopy: Number[][]) => LightweightSpaceship(matrixCopy),
-  "Tumbler": (matrixCopy: Number[][]) => Tumbler(matrixCopy),
-  "GosperGliderGun": (matrixCopy: Number[][]) => GosperGliderGun(matrixCopy),
+  "GiantCross": (matrixCopy: {}, width: number, height: number) => GiantCross(matrixCopy, height, width),
+  "Beehive": (matrixCopy: {}) => Beehive(matrixCopy),
+  "BlinkerOscillator": (matrixCopy: {}) => BlinkerOscillator(matrixCopy),
+  "Beacon": (matrixCopy: {}) => Beacon(matrixCopy),
+  "Glider": (matrixCopy: {}) => Glider(matrixCopy),
+  "SmallExploder": (matrixCopy: {}) => SmallExploder(matrixCopy),
+  "Exploder": (matrixCopy: {}) => Exploder(matrixCopy),
+  "TenCellRow": (matrixCopy: {}) => TenCellRow(matrixCopy),
+  "LightweightSpaceship": (matrixCopy: {}) => LightweightSpaceship(matrixCopy),
+  "Tumbler": (matrixCopy: {}) => Tumbler(matrixCopy),
+  "GosperGliderGun": (matrixCopy: {}) => GosperGliderGun(matrixCopy),
 };
