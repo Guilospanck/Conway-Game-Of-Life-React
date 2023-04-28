@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const ButtonsContainer = styled.div`
   display: flex;
@@ -12,7 +12,7 @@ export const ButtonsContainer = styled.div`
   @media(max-width: 700px) {
     flex-wrap: wrap;
   }
-`;
+`
 
 export const DefaultBTN = styled.button`
   outline: none;
@@ -33,15 +33,15 @@ export const DefaultBTN = styled.button`
   @media(max-width: 700px) {
     margin-bottom: 1%;
   }
-`;
+`
 
-export const StartGameBTN = styled(DefaultBTN)``;
+export const StartGameBTN = styled(DefaultBTN)``
 
-export const StopGameBTN = styled(DefaultBTN)``;
+export const StopGameBTN = styled(DefaultBTN)``
 
-export const ResetGameBTN = styled(DefaultBTN)``;
+export const ResetGameBTN = styled(DefaultBTN)``
 
-export const CentralizeGameBTN = styled(DefaultBTN)``;
+export const CentralizeGameBTN = styled(DefaultBTN)``
 
 export const SliderContainer = styled.div`
   display: flex;
@@ -55,7 +55,7 @@ export const SliderContainer = styled.div`
 
 export const Slider = styled.input`
   outline: none;
-`;
+`
 
 export const Dropdown = styled.select`
   width: 212px;
@@ -76,4 +76,4 @@ export const Dropdown = styled.select`
   @media(max-width: 700px) {
     margin-bottom: 1%;
   }
-`;
+`

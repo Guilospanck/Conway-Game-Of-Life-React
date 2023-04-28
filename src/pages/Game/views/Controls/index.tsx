@@ -1,25 +1,29 @@
-import React from "react";
-import { IUseControlsViewModel } from "../../viewModels/controlsViewModel";
+import React from 'react'
+import { IUseControlsViewModel } from '../../viewModels/controlsViewModel'
 import {
   ButtonsContainer,
-  StartGameBTN, StopGameBTN, ResetGameBTN, CentralizeGameBTN,
-  SliderContainer, Slider, Dropdown
-} from './styles';
+  StartGameBTN,
+  StopGameBTN,
+  ResetGameBTN,
+  CentralizeGameBTN,
+  SliderContainer,
+  Slider,
+  Dropdown
+} from './styles'
 
-import SpeedSVG from '../../../../assets/svg/velocity.svg';
+import SpeedSVG from '../../../../assets/svg/velocity.svg'
 
 type Props = {
   viewModel: IUseControlsViewModel
-};
+}
 
 export const ControlsView = ({ viewModel }: Props) => {
-
   return (
-    <ButtonsContainer>     
+    <ButtonsContainer>
       <Dropdown
         id="seeds"
         name="seeds"
-        onChange={(e) => viewModel.onSelectChange(e.target.value)}
+        onChange={e => viewModel.onSelectChange(e.target.value)}
         onFocus={() => viewModel.onSelectFocus()}
         value={viewModel.seedSelected}
         disabled={viewModel.gameStarted}
@@ -30,17 +34,17 @@ export const ControlsView = ({ viewModel }: Props) => {
         <option key={'Random-1'} value={'Random'} style={{ cursor: 'pointer' }}>
           RANDOM
         </option>
-        {
-          viewModel.SeedsNameArray.map((seed, index) => {
-            return (
-              <option key={index} value={seed} style={{ cursor: 'pointer' }}>
-                {viewModel.SeedsNameToShowInTheScreen[seed].toUpperCase()}
-              </option>
-            )
-          })
-        }
+        {viewModel.SeedsNameArray.map((seed, index) => {
+          return (
+            <option key={index} value={seed} style={{ cursor: 'pointer' }}>
+              {viewModel.SeedsNameToShowInTheScreen[seed].toUpperCase()}
+            </option>
+          )
+        })}
       </Dropdown>
-      <StartGameBTN onClick={(e) => viewModel.onClickStartGameBtn(e)} disabled={viewModel.gameStarted}>Start</StartGameBTN>
+      <StartGameBTN onClick={e => viewModel.onClickStartGameBtn(e)} disabled={viewModel.gameStarted}>
+        Start
+      </StartGameBTN>
       <SliderContainer>
         <SpeedSVG width={30} />
         <Slider
@@ -50,13 +54,14 @@ export const ControlsView = ({ viewModel }: Props) => {
           min={1}
           max={50}
           defaultValue={1}
-          onChange={(e) => viewModel.onSliderPositionCallback(e)}
+          onChange={e => viewModel.onSliderPositionCallback(e)}
         />
       </SliderContainer>
-      <StopGameBTN onClick={(e) => viewModel.onClickStopGameBtn(e)} disabled={!viewModel.gameStarted}>Stop</StopGameBTN>
-      <ResetGameBTN onClick={(e) => viewModel.onClickResetGameBtn(e)}>Reset</ResetGameBTN>
-      <CentralizeGameBTN onClick={(e) => viewModel.onClickCentralizeGameBtn(e)}>Centralize</CentralizeGameBTN>
+      <StopGameBTN onClick={e => viewModel.onClickStopGameBtn(e)} disabled={!viewModel.gameStarted}>
+        Stop
+      </StopGameBTN>
+      <ResetGameBTN onClick={e => viewModel.onClickResetGameBtn(e)}>Reset</ResetGameBTN>
+      <CentralizeGameBTN onClick={e => viewModel.onClickCentralizeGameBtn(e)}>Centralize</CentralizeGameBTN>
     </ButtonsContainer>
-  );
-
-};
+  )
+}

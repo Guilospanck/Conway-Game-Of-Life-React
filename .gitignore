@@ -2,3 +2,5 @@ node_modules
 coverage
 dist
 public/*
+build/
+.DS_Store
